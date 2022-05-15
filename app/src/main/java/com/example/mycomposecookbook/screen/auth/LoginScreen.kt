@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,15 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var emailError by rememberSaveable { mutableStateOf("") }
+    var passwordError by rememberSaveable { mutableStateOf("") } //
+
+
+    /*val scaffoldState = rememberScaffoldState() // this contains the `SnackbarHostState`
+    val (showSnackBar, setShowSnackBar) = remember {
+        mutableStateOf(false)
+    }*/
+
 
     Surface(
         modifier = Modifier
@@ -63,7 +73,8 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
                 hint = "Email",
                 value = email,
                 margin = 10.dp,
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                errorMessage = emailError
             ) {
                 email = it
             }
@@ -72,13 +83,21 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
                 hint = "Password",
                 value = password,
                 isPasswordField = true,
-                margin = 10.dp
+                margin = 10.dp,
+                errorMessage = passwordError
             ) {
                 password = it
             }
 
             MyButton(value = "Login", margin = 10.dp) {
-                navController.navigate("home")
+                emailError = if (email.isEmpty()) "Please enter email" else ""
+                passwordError = if (password.isEmpty()) "Please enter password" else ""
+
+                if (emailError.isEmpty() && passwordError.isEmpty()) {
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
             }
 
             MyText(
@@ -87,12 +106,15 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
                     .padding(end = 10.dp)
             ) {
                 navController.navigate("forgot")
+
             }
 
             Spacer(modifier = Modifier.weight(1.0f))
 
             MyButton(value = "Create an account", margin = 10.dp) {
+
                 navController.navigate("register?email=$email")
+
             }
         }
     }

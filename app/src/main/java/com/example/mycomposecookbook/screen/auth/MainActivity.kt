@@ -2,7 +2,6 @@ package com.example.mycomposecookbook.screen.auth
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -55,7 +54,7 @@ class MainActivity : BaseComponentActivity() {
                     }
                     composable("home") {
                         val vm = hiltViewModel<HomeViewModel>()
-                        HomeScreen(navController,vm)
+                        HomeScreen(navController, vm)
                     }
                 }
             }

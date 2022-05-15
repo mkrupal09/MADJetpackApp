@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.BottomNavigation
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Settings
@@ -37,6 +40,10 @@ fun HomeScreen(
     }, drawerContent = {
         ModalDrawer(drawerContent = {}) {
             Text(text = "Test")
+        }
+    }, floatingActionButton = {
+        FloatingActionButton(onClick = {}) {
+            Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
         }
     }) {
         UserList(users = usersState.value)

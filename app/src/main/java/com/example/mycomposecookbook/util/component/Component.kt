@@ -17,6 +17,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -50,26 +51,37 @@ fun MyEditText(
     value: String = "",
     isPasswordField: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
+    errorMessage: String = "",
     valueChange: (String) -> Unit = {}
 ) {
     var valueFill by remember {
         mutableStateOf(value)
     } //to manage state
 
-    OutlinedTextField(
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        singleLine = true,
-        value = valueFill,
-        onValueChange = {
-            valueFill = it
-            valueChange(it)
-        },
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(margin),
-        label = { Text(text = hint) },
-        visualTransformation = if (isPasswordField) PasswordVisualTransformation() else VisualTransformation.None
-    )
+            .padding(margin)
+    ) {
+        OutlinedTextField(
+            colors = TextFieldDefaults.outlinedTextFieldColors(errorBorderColor = Color.Red),
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            singleLine = true,
+            value = valueFill,
+            onValueChange = {
+                valueFill = it
+                valueChange(it)
+            },
+            isError = errorMessage.isNotEmpty(),
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(text = hint) },
+            visualTransformation = if (isPasswordField) PasswordVisualTransformation() else VisualTransformation.None
+        )
+        if (errorMessage.isNotEmpty()) {
+            Text(text = errorMessage, color = Color.Red)
+        }
+    }
+
 }
 
 @Composable
@@ -121,7 +133,8 @@ fun TopBarScreen(
 fun RowScope.NavigationItem(title: String = "", icon: ImageVector = Icons.Filled.Home) {
     Column(
         modifier = Modifier
-            .wrapContentSize(Alignment.Center).fillMaxHeight()
+            .wrapContentSize(Alignment.Center)
+            .fillMaxHeight()
             .weight(1.0f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
