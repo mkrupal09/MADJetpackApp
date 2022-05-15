@@ -14,6 +14,6 @@ This App covers following MAD tools, API & Languages
 - Coroutines
 
 
-<img alt="" src="https://github.com/mkrupal09/MADJetpackApp/blob/master/images/login.png" width = "212" height = "425" hspace="5"/> <img alt="" src="https://github.com/mkrupal09/MADJetpackApp/blob/master/images/register.png" width = "212" height = "425" hspace="5"/> <img alt="" src="https://github.com/mkrupal09/MADJetpackApp/blob/master/images/home.png" width = "212" height = "425" hspace="5"/>
+<img alt="" src="https://github.com/mkrupal09/MADJetpackApp/blob/master/images/login.png" width = "212" height = "450" hspace="5"/> <img alt="" src="https://github.com/mkrupal09/MADJetpackApp/blob/master/images/register.png" width = "212" height = "450" hspace="5"/> <img alt="" src="https://github.com/mkrupal09/MADJetpackApp/blob/master/images/home.png" width = "212" height = "450" hspace="5"/>
 
 
