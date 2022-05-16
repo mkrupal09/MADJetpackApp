@@ -13,6 +13,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 object RepositoryModule {
 
+    //added comment
     @Provides
     @ViewModelScoped
     fun provideUserRepository(apiService: ApiService): UserRepository {
