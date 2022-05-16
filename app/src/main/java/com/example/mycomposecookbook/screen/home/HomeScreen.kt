@@ -1,21 +1,18 @@
 package com.example.mycomposecookbook.screen.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.ModalDrawer
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,14 +46,26 @@ fun HomeScreen(
         UserList(users = usersState.value)
     }
 
-    viewModel.fetchUsers()
+    LaunchedEffect(key1 = Unit) {
+        viewModel.fetchUsers()
+    }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun UserList(users: List<User>) {
+fun UserList(users: ArrayList<User>) {
+
     LazyColumn(content = {
         items(users) { item ->
-            UserItem(user = item)
+            val dismissState = rememberDismissState(confirmStateChange = {
+                if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart) {
+                    users.remove(item)
+                }
+                true
+            })
+            SwipeToDismiss(state = dismissState, background = { Box {} }, dismissThresholds = {FractionalThreshold(2.0f)}) {
+                UserItem(user = item)
+            }
         }
     }, verticalArrangement = Arrangement.spacedBy(5.dp), contentPadding = PaddingValues(10.dp))
 }

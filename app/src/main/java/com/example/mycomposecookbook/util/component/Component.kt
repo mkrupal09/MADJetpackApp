@@ -2,43 +2,28 @@ package com.example.mycomposecookbook.util.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.mycomposecookbook.R
 import com.example.mycomposecookbook.ui.theme.Purple200
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -58,25 +43,45 @@ fun MyEditText(
         mutableStateOf(value)
     } //to manage state
 
+    var passwordToggle by remember {
+        mutableStateOf(false)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(margin)
     ) {
-        OutlinedTextField(
-            colors = TextFieldDefaults.outlinedTextFieldColors(errorBorderColor = Color.Red),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            singleLine = true,
-            value = valueFill,
-            onValueChange = {
-                valueFill = it
-                valueChange(it)
-            },
-            isError = errorMessage.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text(text = hint) },
-            visualTransformation = if (isPasswordField) PasswordVisualTransformation() else VisualTransformation.None
-        )
+        Box {
+            OutlinedTextField(
+                colors = TextFieldDefaults.outlinedTextFieldColors(errorBorderColor = Color.Red),
+                keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+                singleLine = true,
+                value = valueFill,
+                onValueChange = {
+                    valueFill = it
+                    valueChange(it)
+                },
+                isError = errorMessage.isNotEmpty(),
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(text = hint) },
+                visualTransformation = if (isPasswordField && passwordToggle.not()) PasswordVisualTransformation() else VisualTransformation.None
+            )
+
+            if (isPasswordField) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_eye),
+                    contentDescription = "password toggle",
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 10.dp)
+                        .clickable {
+                            passwordToggle = passwordToggle.not()
+                        }
+                )
+            }
+        }
+
         if (errorMessage.isNotEmpty()) {
             Text(text = errorMessage, color = Color.Red)
         }

@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
 
-    val usersFlow = MutableStateFlow<List<User>>(arrayListOf())
+    val usersFlow = MutableStateFlow<ArrayList<User>>(arrayListOf())
 
     fun fetchUsers() {
         viewModelScope.launch {

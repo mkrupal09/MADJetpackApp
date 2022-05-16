@@ -6,12 +6,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 interface UserRepository {
-    suspend fun getUsers(): List<User>
+    suspend fun getUsers(): ArrayList<User>
 }
 
 
 class UserRepositoryImpl(private val apiService: ApiService) : UserRepository {
-    override suspend fun getUsers(): List<User> = withContext(Dispatchers.IO) {
+    override suspend fun getUsers(): ArrayList<User> = withContext(Dispatchers.IO) {
         apiService.fetchUsers().body()?.list!!
     }
 }

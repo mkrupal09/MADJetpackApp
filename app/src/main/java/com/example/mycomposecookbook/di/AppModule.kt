@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AppModule {
+object AppModule {
 
     @Singleton
     @Provides
@@ -40,11 +40,5 @@ class AppModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserRepository(apiService: ApiService): UserRepository {
-        return UserRepositoryImpl(apiService = apiService)
     }
 }

@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "658582385637",
+    "project_id": "easyshapeview",
+    "storage_bucket": "easyshapeview.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658582385637:android:df519a48c4d3f76527b50c",
+        "android_client_info": {
+          "package_name": "com.dc.easyshapeview"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658582385637-bes3ojfbe13rlmju5ifev07g1usqt7ap.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpvzYQCeDobOjacUtRMK0oaylx-gaflVI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658582385637-bes3ojfbe13rlmju5ifev07g1usqt7ap.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658582385637:android:0beb6715ea73ac9b27b50c",
+        "android_client_info": {
+          "package_name": "com.example.mycomposecookbook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658582385637-bes3ojfbe13rlmju5ifev07g1usqt7ap.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpvzYQCeDobOjacUtRMK0oaylx-gaflVI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658582385637-bes3ojfbe13rlmju5ifev07g1usqt7ap.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -7,8 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,7 +27,11 @@ import com.example.mycomposecookbook.util.extension.imageLoader
 @Preview
 fun UserItem(@PreviewParameter(UserPreviewParameter::class) user: User) {
     Card(elevation = 5.dp) {
-        Row(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
             AsyncImage(
                 model = LocalContext.current.imageLoader(user.avatar, R.drawable.jetpack),
                 contentDescription = "Profile Picture",
