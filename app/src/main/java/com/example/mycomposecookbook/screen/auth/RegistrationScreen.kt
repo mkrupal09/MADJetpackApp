@@ -1,14 +1,10 @@
 package com.example.mycomposecookbook.screen.auth
 
+import android.app.DatePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Surface
@@ -20,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,9 +32,20 @@ fun RegistrationScreen(
     navController: NavController = NavController(LocalContext.current),
     email: String = ""
 ) {
+    val emailX = remember { mutableStateOf(email) }
     val scrollState = rememberScrollState()
     val agreeCondition = remember {
         mutableStateOf(false)
+    }
+    val selectedDate = remember {
+        mutableStateOf("")
+    }
+
+
+    val datePicker = DatePickerDialog(LocalContext.current).apply {
+        setOnDateSetListener { datePicker, mYear, mMonth, mDayOfMonth ->
+            selectedDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
+        }
     }
 
     TopBarScreen(title = "New Registration", statusBarColor = Color.White, backCallback = {
@@ -54,11 +62,17 @@ fun RegistrationScreen(
                 MyEditText(hint = "Last Name", margin = 10.dp) {
 
                 }
+
+                MyEditText(hint = "Birth Date", margin = 10.dp, value = selectedDate, onFocus = {
+                    if (it)
+                        datePicker.show()
+                })
+
                 MyEditText(
                     hint = "Email",
                     margin = 10.dp,
                     keyboardType = KeyboardType.Email,
-                    value = email
+                    value = emailX
                 ) {
 
                 }
@@ -82,6 +96,8 @@ fun RegistrationScreen(
                 MyButton(value = "Register", margin = 10.dp) {
 
                 }
+
+
             }
         }
     }

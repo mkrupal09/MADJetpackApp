@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mycomposecookbook.data.model.User
-import com.example.mycomposecookbook.util.component.NavigationItem
 
 @Composable
 @Preview
@@ -30,9 +29,36 @@ fun HomeScreen(
     val usersState = viewModel.usersFlow.collectAsState(arrayListOf())
     Scaffold(bottomBar = {
         BottomNavigation {
-            NavigationItem(title = "Home", icon = Icons.Filled.Home)
-            NavigationItem(title = "Location", icon = Icons.Filled.LocationOn)
-            NavigationItem(title = "Settings", icon = Icons.Filled.Settings)
+            BottomNavigationItem(
+                label = { Text(text = "Home") }, icon = {
+                    Icon(
+                        imageVector = Icons.Filled.Home,
+                        contentDescription = "test"
+                    )
+                }, onClick = {}, selected = false
+            )
+            BottomNavigationItem(
+                label = { Text(text = "Location") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Filled.LocationOn,
+                        contentDescription = "Location"
+                    )
+                },
+                onClick = {},
+                selected = false
+            )
+            BottomNavigationItem(
+                label = { Text(text = "Settings") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = "Settings"
+                    )
+                },
+                onClick = {},
+                selected = false
+            )
         }
     }, drawerContent = {
         ModalDrawer(drawerContent = {}) {
@@ -63,7 +89,10 @@ fun UserList(users: ArrayList<User>) {
                 }
                 true
             })
-            SwipeToDismiss(state = dismissState, background = { Box {} }, dismissThresholds = {FractionalThreshold(2.0f)}) {
+            SwipeToDismiss(
+                state = dismissState,
+                background = { Box {} },
+                dismissThresholds = { FractionalThreshold(2.0f) }) {
                 UserItem(user = item)
             }
         }

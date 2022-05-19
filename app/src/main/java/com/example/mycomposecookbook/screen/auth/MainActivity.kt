@@ -27,7 +27,10 @@ class MainActivity : BaseComponentActivity() {
                 /*NavHost to AnimatedNavHost for animation*/
                 NavHost(navController = navController, startDestination = "login") {
                     //Here register all screen
-                    composable("login") { LoginScreen(navController) }
+                    composable("login") {
+                        val vm = hiltViewModel<AuthViewModel>()
+                        LoginScreen(vm, navController)
+                    }
                     composable("forgot") { ForgotPasswordScreen(navController) }
                     composable("register?email={email}", arguments = listOf(navArgument("email") {
                         type = NavType.StringType

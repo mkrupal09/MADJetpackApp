@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -33,15 +34,14 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 fun MyEditText(
     margin: Dp = 0.dp,
     hint: String = "Hint here",
-    value: String = "",
+    value: MutableState<String> = mutableStateOf(""),
     isPasswordField: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     errorMessage: String = "",
+    onFocus: (Boolean) -> Unit = {},
     valueChange: (String) -> Unit = {}
 ) {
-    var valueFill by remember {
-        mutableStateOf(value)
-    } //to manage state
+    //to manage state
 
     var passwordToggle by remember {
         mutableStateOf(false)
@@ -57,13 +57,17 @@ fun MyEditText(
                 colors = TextFieldDefaults.outlinedTextFieldColors(errorBorderColor = Color.Red),
                 keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
                 singleLine = true,
-                value = valueFill,
+                value = value.value,
                 onValueChange = {
-                    valueFill = it
+                    value.value = it
                     valueChange(it)
                 },
                 isError = errorMessage.isNotEmpty(),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged {
+                        onFocus(it.hasFocus)
+                    },
                 label = { Text(text = hint) },
                 visualTransformation = if (isPasswordField && passwordToggle.not()) PasswordVisualTransformation() else VisualTransformation.None
             )
