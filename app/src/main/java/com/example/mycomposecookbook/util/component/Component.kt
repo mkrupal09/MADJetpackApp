@@ -1,6 +1,7 @@
 package com.example.mycomposecookbook.util.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -95,10 +96,20 @@ fun MyEditText(
 
 @Composable
 @Preview
-fun MyButton(margin: Dp = 0.dp, value: String = "Button", onClick: () -> Unit = {}) {
+fun MyButton(
+    margin: Dp = 0.dp,
+    value: String = "Button",
+    borderd: Boolean = false,
+    onClick: () -> Unit = {}
+) {
     Button(
         onClick = onClick,
         modifier = Modifier
+            .apply {
+                if (borderd) {
+                    border(width = 1.dp, shape = RoundedCornerShape(10.dp), color = Color.Red)
+                }
+            }
             .fillMaxWidth()
             .padding(margin),
         shape = RoundedCornerShape(10.dp),

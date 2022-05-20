@@ -90,7 +90,6 @@ fun LoginScreen(
 
             MyButton(value = "Login", margin = 10.dp) {
                 viewModel.login(email.value, password.value)
-
             }
 
             MyText(
