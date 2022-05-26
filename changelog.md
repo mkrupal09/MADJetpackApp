@@ -9,3 +9,8 @@
 
 - Added Password toggle in MyEditText
 - Added error label and border in MyEditText
+
+26 May 2022
+
+- Added constraint layout
+- Implemented navigation flow for bottom navigation
