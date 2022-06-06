@@ -1,35 +1,44 @@
 package com.example.mycomposecookbook.screen.home.userDashboard
 
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.example.mycomposecookbook.data.model.User
-import com.example.mycomposecookbook.screen.home.UserItem as UserItem1
+import com.example.mycomposecookbook.screen.home.HomeViewModel
+import com.example.mycomposecookbook.screen.home.UserItem
 
 
+@ExperimentalFoundationApi
 @OptIn(ExperimentalMaterialApi::class) //For swipe feature
 @Composable
-fun UserListHome(users: ArrayList<User> = arrayListOf()) {
-    LazyColumn(content = {
-        items(users) { item ->
-            val dismissState = rememberDismissState(confirmStateChange = {
-                if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart) {
-                    users.remove(item)
-                }
-                true
-            })
-            SwipeToDismiss(
-                state = dismissState,
-                background = { Box {} },
-                dismissThresholds = { FractionalThreshold(2.0f) }) {
-                UserItem1(user = item)
+fun UserListHome(viewModel: HomeViewModel) {
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.fetchUsers()
+    }
+
+    val lazyUsers: LazyPagingItems<User> = viewModel.usersFlow.collectAsLazyPagingItems()
+
+    val loadingCallback = viewModel.userListLoading.collectAsState(initial = false)
+    LazyColumn {
+        items(lazyUsers) { user ->
+            UserItem(user = user!!)
+        }
+        if (loadingCallback.value) {
+            item {
+                CircularProgressIndicator(modifier = Modifier.size(50.dp))
             }
         }
-    }, verticalArrangement = Arrangement.spacedBy(5.dp), contentPadding = PaddingValues(10.dp))
+    }
 }
