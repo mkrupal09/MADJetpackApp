@@ -1,15 +1,17 @@
 package com.example.mycomposecookbook.screen.home.setting
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,6 +27,37 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
             .fillMaxHeight()
     ) {
         Text(text = "Settings", modifier = Modifier.align(Alignment.CenterHorizontally))
+
+        val requestLogoutDialog = remember {
+            mutableStateOf(false)
+        }
+        if (requestLogoutDialog.value) {
+            AlertDialog(onDismissRequest = {
+                requestLogoutDialog.value = false
+            }, text = { Text(text = "Are you sure want to logout?", fontSize = 24.sp) }, buttons = {
+                Row {
+                    Text(
+                        text = "Logout anyway",
+                        color = Color.Blue,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .clickable {
+                                navController.navigate("login") {
+
+                                }
+                            })
+
+                    Text(text = "Cancel",
+                        color = Color.Gray,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .clickable {
+                                requestLogoutDialog.value = false
+                            })
+                }
+            })
+        }
 
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val profile = createRef()
@@ -56,9 +89,7 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
                     start.linkTo(guidelineStart)
                 }
                 .clickable {
-                    navController.navigate("login") {
-
-                    }
+                    requestLogoutDialog.value = true
                 }, fontSize = 30.sp
             )
 

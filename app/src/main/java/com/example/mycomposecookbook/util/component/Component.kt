@@ -229,3 +229,4 @@ fun getWeatherApp() {
         drawPath(path = path, color = Color.White.copy(alpha = .90f))
     }
 }
+
