@@ -27,7 +27,7 @@ import com.example.mycomposecookbook.util.component.MyEditText
 import com.example.mycomposecookbook.util.component.TopBarScreen
 
 @Composable
-@Preview
+@Preview(name="Asd")
 fun RegistrationScreen(
     navController: NavController = NavController(LocalContext.current),
     email: String = ""

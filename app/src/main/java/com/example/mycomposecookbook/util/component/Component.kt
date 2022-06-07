@@ -1,5 +1,6 @@
 package com.example.mycomposecookbook.util.component
 
+import android.app.AlertDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -168,4 +169,35 @@ fun RowScope.NavigationItem(title: String = "", icon: ImageVector = Icons.Filled
         )
         Text(text = title)
     }
+}
+
+@Composable
+fun MyAlertDialog(
+    title: String,
+    message: String,
+    positiveButton: String = "",
+    negativeButton: String,
+    dismissRequest: (Boolean) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = {
+            dismissRequest(false)
+        },
+        buttons = {
+            Column {
+                MyButton(value = positiveButton, margin = 10.dp) {
+                    dismissRequest(false)
+                }
+                MyButton(value = negativeButton, margin = 10.dp, borderd = true)
+                {
+                    dismissRequest(false)
+                }
+            }
+        },
+        title = { Text(text = title) },
+        text = {
+            Text(
+                text = message
+            )
+        })
 }

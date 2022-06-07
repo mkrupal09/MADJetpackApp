@@ -1,8 +1,7 @@
 package com.example.mycomposecookbook.di
 
 import com.example.mycomposecookbook.data.remote.ApiService
-import com.example.mycomposecookbook.screen.home.UserRepository
-import com.example.mycomposecookbook.screen.home.UserRepositoryImpl
+import com.example.mycomposecookbook.data.remote.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,7 +29,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideApiClient(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder().baseUrl("https://reqres.in/")
+        return Retrofit.Builder().baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

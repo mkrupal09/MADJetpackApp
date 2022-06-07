@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mycomposecookbook.R
+import com.example.mycomposecookbook.util.component.MyAlertDialog
 import com.example.mycomposecookbook.util.component.MyButton
 import com.example.mycomposecookbook.util.component.MyEditText
 import com.example.mycomposecookbook.util.component.MyText
@@ -31,12 +32,25 @@ fun LoginScreen(
     val password = remember { mutableStateOf("") }
     val emailError = viewModel.emailError.collectAsState()
     val passwordError = viewModel.passwordError.collectAsState()
-    val navigateHome = viewModel.navigateHome.collectAsState()
+    val navigateHome = viewModel.navigateHome.collectAsState(false)
+    val showAlert = remember { mutableStateOf(false) }
 
 
+    if (showAlert.value) {
+        MyAlertDialog(
+            title = "Login",
+            message = "Something went wrong",
+            positiveButton = "Try again",
+            negativeButton = "",
+            dismissRequest = {
+                showAlert.value = false
+            })
+    }
     LaunchedEffect(navigateHome.value) {
         if (navigateHome.value) {
             navController.navigate("home")
+        } else {
+            showAlert.value = true
         }
     }
 

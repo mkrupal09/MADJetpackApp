@@ -20,10 +20,10 @@ class MainActivity : BaseComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         setContent {
             MyComposeCookBookTheme(darkTheme = false) {
                 val navController = rememberNavController()
+
                 /*NavHost to AnimatedNavHost for animation*/
                 NavHost(navController = navController, startDestination = "login") {
                     //Here register all screen

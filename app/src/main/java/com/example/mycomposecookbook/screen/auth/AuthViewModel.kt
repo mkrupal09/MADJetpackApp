@@ -1,13 +1,21 @@
 package com.example.mycomposecookbook.screen.auth
 
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.mycomposecookbook.screen.home.UserRepository
+import com.example.mycomposecookbook.util.core.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AuthViewModel : ViewModel() {
+@HiltViewModel
+class AuthViewModel @Inject constructor(private val userRepository: UserRepository) :
+    BaseViewModel() {
 
     val emailError = MutableStateFlow("")
     val passwordError = MutableStateFlow("")
-    val navigateHome = MutableStateFlow(false)
+    val navigateHome = MutableSharedFlow<Boolean>(0)
 
     fun login(email: String, password: String) {
 
@@ -15,7 +23,12 @@ class AuthViewModel : ViewModel() {
         passwordError.value = if (password.isEmpty()) "Please enter password" else ""
 
         if (emailError.value.isEmpty() && passwordError.value.isEmpty()) {
-            navigateHome.value = true
+            showLoading(true)
+            viewModelScope.launch {
+                val value = userRepository.login(email, password)
+                showLoading(false)
+                navigateHome.emit(value)
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example.mycomposecookbook.data.remote
 
 import com.example.mycomposecookbook.data.model.ListResponse
 import com.example.mycomposecookbook.data.model.User
+import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -19,4 +20,12 @@ interface ApiService {
 
     @GET("api/users")
     suspend fun fetchUsers(): Response<ListResponse<User>>
+
+
+    @POST("api/login")
+    @FormUrlEncoded
+    suspend fun login(
+        @Field("email") email: String,
+        @Field("password") password: String
+    ): Response<JSONObject>
 }
