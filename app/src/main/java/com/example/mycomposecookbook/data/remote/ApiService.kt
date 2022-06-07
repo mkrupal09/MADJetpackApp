@@ -4,10 +4,7 @@ import com.example.mycomposecookbook.data.model.ListResponse
 import com.example.mycomposecookbook.data.model.User
 import org.json.JSONObject
 import retrofit2.Response
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 const val BASE_URL = "https://reqres.in"
 
@@ -18,14 +15,11 @@ interface ApiService {
     suspend fun createUser(@Field("name") name: String, @Field("job") job: String)
 
 
-    @GET("api/users")
-    suspend fun fetchUsers(): Response<ListResponse<User>>
-
-
     @POST("api/login")
     @FormUrlEncoded
     suspend fun login(
         @Field("email") email: String,
         @Field("password") password: String
     ): Response<JSONObject>
+    suspend fun fetchUsers(@Query("page") page: Int = 1): Response<ListResponse<User>>
 }

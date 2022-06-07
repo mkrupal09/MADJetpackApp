@@ -1,10 +1,7 @@
 package com.example.mycomposecookbook.screen.home
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -14,19 +11,32 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.mycomposecookbook.data.model.User
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.example.mycomposecookbook.screen.home.location.LocationScreen
+import com.example.mycomposecookbook.screen.home.setting.SettingScreen
+import com.example.mycomposecookbook.screen.home.userDashboard.UserListHome
 
+@ExperimentalFoundationApi
 @Composable
 @Preview
 fun HomeScreen(
     navController: NavController = NavController(LocalContext.current),
     viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    val usersState = viewModel.usersFlow.collectAsState(arrayListOf())
+   /* val usersState = viewModel.usersFlow.collectAsState(arrayListOf())*/
+
+    val childNavController = rememberNavController()
+    val navBackStackEntry by childNavController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     Scaffold(bottomBar = {
         BottomNavigation {
             BottomNavigationItem(
@@ -35,7 +45,9 @@ fun HomeScreen(
                         imageVector = Icons.Filled.Home,
                         contentDescription = "test"
                     )
-                }, onClick = {}, selected = false
+                }, onClick = {
+                    childNavController.navigate("list")
+                }, selected = currentRoute == "list"
             )
             BottomNavigationItem(
                 label = { Text(text = "Location") },
@@ -45,8 +57,12 @@ fun HomeScreen(
                         contentDescription = "Location"
                     )
                 },
-                onClick = {},
-                selected = false
+                onClick = {
+                    childNavController.navigate("location") {
+
+                    }
+                },
+                selected = currentRoute == "location"
             )
             BottomNavigationItem(
                 label = { Text(text = "Settings") },
@@ -56,46 +72,35 @@ fun HomeScreen(
                         contentDescription = "Settings"
                     )
                 },
-                onClick = {},
-                selected = false
+                onClick = {
+                    childNavController.navigate("setting")
+                },
+                selected = currentRoute == "setting"
             )
         }
     }, drawerContent = {
         ModalDrawer(drawerContent = {}) {
             Text(text = "Test")
         }
-    }, floatingActionButton = {
-        FloatingActionButton(onClick = {}) {
-            Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
-        }
-    }) {
-        UserList(users = usersState.value)
-    }
-
-    LaunchedEffect(key1 = Unit) {
-        viewModel.fetchUsers()
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun UserList(users: ArrayList<User>) {
-
-    LazyColumn(content = {
-        items(users) { item ->
-            val dismissState = rememberDismissState(confirmStateChange = {
-                if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart) {
-                    users.remove(item)
-                }
-                true
-            })
-            SwipeToDismiss(
-                state = dismissState,
-                background = { Box {} },
-                dismissThresholds = { FractionalThreshold(2.0f) }) {
-                UserItem(user = item)
+    }) { innerPadding ->
+        NavHost(
+            navController = childNavController,
+            startDestination = "list",
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable("list") {
+                UserListHome(viewModel)
+            }
+            composable("setting")
+            {
+                SettingScreen(navController)
+            }
+            composable("location")
+            {
+                LocationScreen()
             }
         }
-    }, verticalArrangement = Arrangement.spacedBy(5.dp), contentPadding = PaddingValues(10.dp))
-}
+    }
 
+
+}

@@ -78,4 +78,11 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:2.38.1"
 
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
+
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
+
+    implementation  "com.google.maps.android:maps-compose:2.2.0"
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+
+    implementation "androidx.paging:paging-compose:1.0.0-alpha15" //paging jetpack compose
 }
