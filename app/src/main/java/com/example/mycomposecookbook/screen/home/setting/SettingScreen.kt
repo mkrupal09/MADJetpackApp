@@ -68,13 +68,13 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
             val guidelinesEnd = createGuidelineFromEnd(0.04f)
 
             val chain = createVerticalChain(
-                privacy,
+                profile,
                 faq,
                 privacy,
+                notification,
                 logout,
                 version,
-                notification,
-                chainStyle = ChainStyle.SpreadInside
+                chainStyle = ChainStyle.Packed
             )
 
             val notificationState = remember {
@@ -82,25 +82,21 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
             }
 
             Text(text = "Profile", modifier = Modifier.constrainAs(profile) {
-                top.linkTo(parent.top, 30.dp)
-                bottom.linkTo(faq.top)
+
                 start.linkTo(guidelineStart)
             }, fontSize = 30.sp)
             Text(text = "Faq", modifier = Modifier.constrainAs(faq) {
-                top.linkTo(profile.bottom)
-                bottom.linkTo(privacy.top)
+
                 /* start.linkTo(profile.end)*/
                 start.linkTo(guidelineStart)
             }, fontSize = 30.sp)
             Text(text = "Privacy policy", modifier = Modifier.constrainAs(privacy) {
-                top.linkTo(faq.bottom)
-                bottom.linkTo(logout.top)
+
                 /*start.linkTo(faq.end, 20.dp)*/
                 start.linkTo(guidelineStart)
             }, fontSize = 30.sp)
             Text(text = "Logout", modifier = Modifier
                 .constrainAs(logout) {
-                    top.linkTo(privacy.bottom)
                     start.linkTo(guidelineStart)
                 }
                 .clickable {
@@ -108,17 +104,18 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
                 }, fontSize = 30.sp
             )
             Row(modifier = Modifier.constrainAs(notification) {
-                top.linkTo(logout.bottom)
                 start.linkTo(guidelineStart)
             }) {
-                Text(text = "Notification", modifier = Modifier
-                    .weight(1.0f)
-                    .clickable {
-                        notificationState.value = notificationState.value.not()
-                    }, fontSize = 30.sp)
+                Text(
+                    text = "Notification", modifier = Modifier
+                        .weight(1.0f)
+                        .clickable {
+                            notificationState.value = notificationState.value.not()
+                        }, fontSize = 30.sp
+                )
                 Switch(
                     checked = notificationState.value,
-                    modifier = Modifier.padding(10.dp),
+                    modifier = Modifier.padding(5.dp),
                     onCheckedChange = {
                         notificationState.value = notificationState.value.not()
                     })

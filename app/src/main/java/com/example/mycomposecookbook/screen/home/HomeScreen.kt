@@ -82,12 +82,6 @@ fun HomeScreen(
         ModalDrawer(drawerContent = {}) {
             Text(text = "Test")
         }
-    }, floatingActionButton = {
-        if (currentRoute == "list") {
-            FloatingActionButton(onClick = {}) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
-            }
-        }
     }) { innerPadding ->
         NavHost(
             navController = childNavController,
