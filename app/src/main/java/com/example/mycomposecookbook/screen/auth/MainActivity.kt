@@ -2,6 +2,7 @@ package com.example.mycomposecookbook.screen.auth
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,6 +16,7 @@ import com.example.mycomposecookbook.screen.home.HomeViewModel
 import com.example.mycomposecookbook.ui.theme.MyComposeCookBookTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalFoundationApi
 @AndroidEntryPoint
 class MainActivity : BaseComponentActivity() {
 

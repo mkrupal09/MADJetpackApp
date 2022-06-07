@@ -1,5 +1,6 @@
 package com.example.mycomposecookbook.screen.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -23,13 +24,14 @@ import com.example.mycomposecookbook.screen.home.location.LocationScreen
 import com.example.mycomposecookbook.screen.home.setting.SettingScreen
 import com.example.mycomposecookbook.screen.home.userDashboard.UserListHome
 
+@ExperimentalFoundationApi
 @Composable
 @Preview
 fun HomeScreen(
     navController: NavController = NavController(LocalContext.current),
     viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    val usersState = viewModel.usersFlow.collectAsState(arrayListOf())
+   /* val usersState = viewModel.usersFlow.collectAsState(arrayListOf())*/
 
     val childNavController = rememberNavController()
     val navBackStackEntry by childNavController.currentBackStackEntryAsState()
@@ -80,12 +82,6 @@ fun HomeScreen(
         ModalDrawer(drawerContent = {}) {
             Text(text = "Test")
         }
-    }, floatingActionButton = {
-        if (currentRoute == "list") {
-            FloatingActionButton(onClick = {}) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
-            }
-        }
     }) { innerPadding ->
         NavHost(
             navController = childNavController,
@@ -93,7 +89,7 @@ fun HomeScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable("list") {
-                UserListHome(users = usersState.value)
+                UserListHome(viewModel)
             }
             composable("setting")
             {
@@ -106,7 +102,5 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.fetchUsers()
-    }
+
 }

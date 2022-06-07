@@ -3,6 +3,7 @@ package com.example.mycomposecookbook.screen.home.setting
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 
@@ -60,38 +62,65 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
         }
 
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val profile = createRef()
-            val faq = createRef()
-            val privacy = createRef()
-            val logout = createRef()
-            val version = createRef()
+            val (profile, faq, privacy, logout, version, notification) = createRefs()
 
             val guidelineStart = createGuidelineFromStart(0.04f)
             val guidelinesEnd = createGuidelineFromEnd(0.04f)
 
+            val chain = createVerticalChain(
+                profile,
+                faq,
+                privacy,
+                notification,
+                logout,
+                version,
+                chainStyle = ChainStyle.Packed
+            )
+
+            val notificationState = remember {
+                mutableStateOf(false)
+            }
+
             Text(text = "Profile", modifier = Modifier.constrainAs(profile) {
-                top.linkTo(parent.top, 30.dp)
+
                 start.linkTo(guidelineStart)
             }, fontSize = 30.sp)
             Text(text = "Faq", modifier = Modifier.constrainAs(faq) {
-                top.linkTo(profile.bottom)
+
                 /* start.linkTo(profile.end)*/
                 start.linkTo(guidelineStart)
             }, fontSize = 30.sp)
             Text(text = "Privacy policy", modifier = Modifier.constrainAs(privacy) {
-                top.linkTo(faq.bottom)
+
                 /*start.linkTo(faq.end, 20.dp)*/
                 start.linkTo(guidelineStart)
             }, fontSize = 30.sp)
             Text(text = "Logout", modifier = Modifier
                 .constrainAs(logout) {
-                    top.linkTo(privacy.bottom)
                     start.linkTo(guidelineStart)
                 }
                 .clickable {
                     requestLogoutDialog.value = true
                 }, fontSize = 30.sp
             )
+            Row(modifier = Modifier.constrainAs(notification) {
+                start.linkTo(guidelineStart)
+            }) {
+                Text(
+                    text = "Notification", modifier = Modifier
+                        .weight(1.0f)
+                        .clickable {
+                            notificationState.value = notificationState.value.not()
+                        }, fontSize = 30.sp
+                )
+                Switch(
+                    checked = notificationState.value,
+                    modifier = Modifier.padding(5.dp),
+                    onCheckedChange = {
+                        notificationState.value = notificationState.value.not()
+                    })
+            }
+
 
             Text(text = "Version 1.0", modifier = Modifier.constrainAs(version) {
                 bottom.linkTo(parent.bottom, 10.dp)
