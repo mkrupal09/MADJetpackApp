@@ -28,7 +28,7 @@ class MainActivity : BaseComponentActivity() {
             MyComposeCookBookTheme(darkTheme = false) {
                 val navController = rememberNavController()
                 /*NavHost to AnimatedNavHost for animation*/
-                NavHost(navController = navController, startDestination = "home") {
+                NavHost(navController = navController, startDestination = "login") {
                     //Here register all screen
                     composable(Screens.LoginScreen.route) {
                         val vm = hiltViewModel<AuthViewModel>()
