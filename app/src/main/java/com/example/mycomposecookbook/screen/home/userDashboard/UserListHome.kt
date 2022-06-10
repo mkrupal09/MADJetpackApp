@@ -101,14 +101,6 @@ fun UserListHome(viewModel: HomeViewModel) {
                 )
 
                 LazyColumn(
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures {
-                            coroutineScope.launch {
-                                if (bottomSheetScaffoldState.bottomSheetState.isExpanded)
-                                    bottomSheetScaffoldState.bottomSheetState.collapse()
-                            }
-                        }
-                    },
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -145,5 +137,4 @@ fun UserListHome(viewModel: HomeViewModel) {
             }
         }
     }
-
 }
