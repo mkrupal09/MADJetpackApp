@@ -21,5 +21,10 @@ interface ApiService {
         @Field("email") email: String,
         @Field("password") password: String
     ): Response<JSONObject>
+
+    @GET("api/users")
     suspend fun fetchUsers(@Query("page") page: Int = 1): Response<ListResponse<User>>
+
+
+
 }

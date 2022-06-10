@@ -12,6 +12,8 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 interface UserRepository {
+    suspend fun login(email: String, password: String): Boolean
+
     suspend fun getUsers(page: Int): Response<ListResponse<User>>
 }
 
@@ -21,6 +23,9 @@ class UserRepositoryImpl(private val apiService: ApiService) : UserRepository {
         withContext(Dispatchers.IO) {
             apiService.fetchUsers(page)
         }
+    override suspend fun login(email: String, password: String): Boolean {
+        return apiService.login(email, password).code() == 200
+    }
 }
 
 
