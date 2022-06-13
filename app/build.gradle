@@ -19,12 +19,22 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        manifestPlaceholders = [MAPS_API_KEY: "${properties.getProperty('GOOGLE_MAPS_API_KEY')}"]
     }
 
     buildTypes {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
         release {
+            buildConfigField("String", "BASE_URL", "\"" + properties['BASE_URL'] + "\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug{
+            buildConfigField("String", "BASE_URL", "\"" + properties['BASE_URL'] + "\"")
         }
     }
     compileOptions {
@@ -81,8 +91,10 @@ dependencies {
 
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
 
-    implementation  "com.google.maps.android:maps-compose:2.2.0"
+    implementation "com.google.maps.android:maps-compose:2.2.0"
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
 
     implementation "androidx.paging:paging-compose:1.0.0-alpha15" //paging jetpack compose
+
+    implementation "com.google.accompanist:accompanist-flowlayout:0.24.10-beta"
 }

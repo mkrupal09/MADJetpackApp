@@ -1,20 +1,26 @@
 package com.example.mycomposecookbook.screen.auth
 
+import android.view.animation.OvershootInterpolator
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mycomposecookbook.R
-import com.example.mycomposecookbook.util.component.MyAlertDialog
 import com.example.mycomposecookbook.util.component.MyButton
 import com.example.mycomposecookbook.util.component.MyEditText
 import com.example.mycomposecookbook.util.component.MyText
@@ -33,24 +39,19 @@ fun LoginScreen(
     val emailError = viewModel.emailError.collectAsState()
     val passwordError = viewModel.passwordError.collectAsState()
     val navigateHome = viewModel.navigateHome.collectAsState(false)
-    val showAlert = remember { mutableStateOf(false) }
+    var logoVisible by remember { mutableStateOf(false) }
+    val density = LocalDensity.current
 
 
-    if (showAlert.value) {
-        MyAlertDialog(
-            title = "Login",
-            message = "Something went wrong",
-            positiveButton = "Try again",
-            negativeButton = "",
-            dismissRequest = {
-                showAlert.value = false
-            })
+    val logoScale = remember {
+        androidx.compose.animation.core.Animatable(0.5f)
     }
+
+
+
     LaunchedEffect(navigateHome.value) {
         if (navigateHome.value) {
             navController.navigate("home")
-        } else {
-            showAlert.value = true
         }
     }
 
@@ -67,20 +68,29 @@ fun LoginScreen(
             .fillMaxHeight()
     ) {
         Column(verticalArrangement = Arrangement.Center) {
-            Box(
-                modifier = Modifier
-                    .weight(1.0f)
-                    .fillMaxWidth()
-            )
-            {
-                Image(
-                    painter = painterResource(id = R.drawable.jetpack),
-                    contentDescription = "Image",
+            AnimatedVisibility(
+                visible = logoVisible,
+                enter = slideInHorizontally(animationSpec = tween(durationMillis = 3000) ) {
+
+                    with(density) { -100.dp.roundToPx() }
+                }) {
+                Box(
                     modifier = Modifier
-                        .size(150.dp)
-                        .align(Alignment.Center),
+                        .weight(1.0f)
+                        .fillMaxWidth()
                 )
+                {
+                    Image(
+                        painter = painterResource(id = R.drawable.jetpack),
+                        contentDescription = "Image",
+                        modifier = Modifier
+                            .size(150.dp)
+                            .scale(logoScale.value)
+                            .align(Alignment.Center),
+                    )
+                }
             }
+
 
             MyEditText(
                 hint = "Email",
@@ -119,6 +129,19 @@ fun LoginScreen(
             MyButton(value = "Create an account", margin = 10.dp) {
                 navController.navigate("register?email=${email.value}")
             }
+
+            //to animate logo
+            LaunchedEffect(key1 = Unit, block = {
+                logoVisible = true
+
+
+                logoScale.animateTo(
+                    targetValue = 1.0f,
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = { OvershootInterpolator(2f).getInterpolation(it) })
+                )
+            })
         }
     }
 
