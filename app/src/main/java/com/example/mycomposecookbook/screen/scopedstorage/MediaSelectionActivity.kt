@@ -1,13 +1,19 @@
 package com.example.mycomposecookbook.screen.scopedstorage
 
 
+import android.app.RecoverableSecurityException
 import android.content.ContentUris
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,12 +22,14 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
@@ -54,10 +62,24 @@ class MediaSelectionActivity : ComponentActivity() {
                                         finish()
                                     }
                                     .align(Alignment.CenterVertically)
+                                    .padding(5.dp)
                             )
                             Text(
                                 text = "Select Image",
+                                fontWeight = FontWeight.Bold,
                                 modifier = Modifier.align(Alignment.CenterVertically)
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+                            Icon(
+                                Icons.Filled.Refresh,
+                                contentDescription = "refresh",
+                                modifier = Modifier
+                                    .clickable {
+                                        loadList()
+                                    }
+                                    .align(Alignment.CenterVertically)
+                                    .padding(5.dp)
                             )
                         }
                     }) { innerPadding ->
@@ -123,37 +145,127 @@ class MediaSelectionActivity : ComponentActivity() {
                 )
             }
             if (selectedIndexRemember.value >= 0) {
-                Button(
-                    onClick = {
-                        val intentX = Intent()
-                        intentX.putExtra("media", mediaList[selectedIndex.value].uri.toString())
-                        setResult(RESULT_OK, intentX)
-                        finish()
-                    },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.BottomCenter),
-                    contentPadding = PaddingValues(0.dp)
+                        .align(Alignment.BottomCenter)
                 ) {
-                    Text(text = "Confirm", color = Color.White)
+
+                    Button(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(5.dp),
+                        onClick = {
+                            sendResult()
+                        },
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        Text(text = "Confirm", color = Color.White)
+                    }
+
+                    Button(modifier = Modifier
+                        .weight(1f)
+                        .padding(5.dp), onClick = {
+                        delete()
+                    }) {
+                        Text(text = "Delete", color = Color.White)
+                    }
                 }
             }
         }
 
         LaunchedEffect(key1 = Unit) {
-            showLoading.value = true
-            lifecycleScope.launch(Dispatchers.IO) {
-                val images = queryImageStorage()
-                withContext(Dispatchers.Main) {
-                    mediaList.clear()
-                    mediaList.addAll(images)
-                    Log.e("images", images.toString())
-                    showLoading.value = false
+            loadList()
+        }
+    }
+
+
+    private fun loadList() {
+        showLoading.value = true
+        lifecycleScope.launch(Dispatchers.IO) {
+            val images = queryImageStorage()
+            withContext(Dispatchers.Main) {
+                mediaList.clear()
+                mediaList.addAll(images)
+                Log.e("images", images.toString())
+                showLoading.value = false
+            }
+        }
+    }
+
+
+    private fun sendResult() {
+        val intentX = Intent()
+        intentX.putExtra("media", mediaList[selectedIndex.value].uri.toString())
+        setResult(RESULT_OK, intentX)
+        finish()
+    }
+
+    private fun delete() {
+        lifecycleScope.launch {
+            deletePhotoFromExternalStorage(mediaList[selectedIndex.value].uri)
+        }
+    }
+
+    private val deleteSenderResult =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                    lifecycleScope.launch {
+                        deletePhotoFromExternalStorage(
+                            mediaList[selectedIndex.value].uri ?: return@launch
+                        )
+                    }
+                }
+                Toast.makeText(
+                    this@MediaSelectionActivity,
+                    "Photo deleted successfully",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            } else {
+                Toast.makeText(
+                    this@MediaSelectionActivity,
+                    "Photo couldn't be deleted",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            }
+        }
+
+    /**
+     * to delete image from mediastore
+     */
+    private suspend fun deletePhotoFromExternalStorage(photoUri: Uri) {
+        withContext(Dispatchers.IO) {
+            try {
+                contentResolver.delete(photoUri, null, null)
+            } catch (e: SecurityException) {
+                val intentSender = when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                        MediaStore.createDeleteRequest(
+                            contentResolver,
+                            listOf(photoUri)
+                        ).intentSender
+                    }
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                        val recoverableSecurityException = e as? RecoverableSecurityException
+                        recoverableSecurityException?.userAction?.actionIntent?.intentSender
+                    }
+                    else -> null
+                }
+                intentSender?.let { sender ->
+                    deleteSenderResult.launch(
+                        IntentSenderRequest.Builder(sender).build()
+                    )
                 }
             }
         }
     }
 
+    /**
+     * TO retrieve images from mediastore
+     */
     private suspend fun queryImageStorage() = withContext(Dispatchers.IO) {
         val list = arrayListOf<ImageModel>()
         val imageProjection = arrayOf(
@@ -176,6 +288,9 @@ class MediaSelectionActivity : ComponentActivity() {
                 val nameColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
                 val sizeColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
                 val dateColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
+                it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                val bucketName =
+                    it.getColumnIndexOrThrow(MediaStore.MediaColumns.BUCKET_DISPLAY_NAME)
                 while (it.moveToNext()) {
                     val id = it.getLong(idColumn)
                     val name = it.getString(nameColumn)

@@ -241,10 +241,10 @@ class ScopedStorageActivity : BaseComponentActivity() {
 
         //val dir = externalCacheDir!! // Android>Data>(packagename)>cache>(Your file saved here)*/
 
-        val dir = filesDir
+        val dir = externalMediaDirs.first()
 
 
-        val folder = File(dir.absolutePath)
+        val folder = File(dir!!.absolutePath)
         folder.mkdirs()
 
         val file = File(folder, "${System.currentTimeMillis()}.jpg")
@@ -285,9 +285,12 @@ class ScopedStorageActivity : BaseComponentActivity() {
         currentUri: Uri,
         filename: String = "screenshot.jpg",
         mimeType: String = "image/jpeg",
-        directory: String = Environment.DIRECTORY_PICTURES,
+        directory: String = Environment.DIRECTORY_DOWNLOADS + "/ScopedStorage",
         mediaContentUri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     ) {
+        if (File(directory).exists().not()) {
+            File(directory).mkdir()
+        }
         val imageOutStream: OutputStream
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val values = ContentValues().apply {
@@ -326,7 +329,6 @@ class ScopedStorageActivity : BaseComponentActivity() {
 
 
     private val DEFAULT_BUFFER_SIZE = 1024 * 4
-
 
     @Throws(IOException::class)
     fun copyLarge(input: InputStream, output: OutputStream): Long {

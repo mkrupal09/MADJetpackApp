@@ -1,5 +1,7 @@
 package com.example.mycomposecookbook.screen.home.setting
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.AlertDialog
@@ -19,10 +21,12 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import com.example.mycomposecookbook.screen.scopedstorage.ScopedStorageActivity
 
 @Composable
 @Preview
 fun SettingScreen(navController: NavController = NavController(LocalContext.current)) {
+    val context= LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -82,8 +86,9 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
             }
 
             Text(text = "Profile", modifier = Modifier.constrainAs(profile) {
-
                 start.linkTo(guidelineStart)
+            }.clickable {
+                openProfileScreen(context)
             }, fontSize = 30.sp)
             Text(text = "Faq", modifier = Modifier.constrainAs(faq) {
 
@@ -129,4 +134,14 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
             })
         }
     }
+}
+
+
+private fun openProfileScreen(context: Context) {
+    context.startActivity(
+        Intent(
+            context,
+            ScopedStorageActivity::class.java
+        )
+    )
 }

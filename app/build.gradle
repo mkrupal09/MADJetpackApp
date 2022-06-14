@@ -97,4 +97,9 @@ dependencies {
     implementation "androidx.paging:paging-compose:1.0.0-alpha15" //paging jetpack compose
 
     implementation "com.google.accompanist:accompanist-flowlayout:0.24.10-beta"
+
+    implementation "com.google.accompanist:accompanist-pager:0.24.10-beta"
+
+    // If using indicators, also depend on
+    implementation "com.google.accompanist:accompanist-pager-indicators:0.24.10-beta"
 }
