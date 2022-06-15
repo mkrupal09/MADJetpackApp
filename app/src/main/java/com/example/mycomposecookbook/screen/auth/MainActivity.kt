@@ -9,10 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.mycomposecookbook.data.model.User
 import com.example.mycomposecookbook.screen.Screens
 import com.example.mycomposecookbook.screen.base.BaseComponentActivity
 import com.example.mycomposecookbook.screen.home.HomeScreen
 import com.example.mycomposecookbook.screen.home.HomeViewModel
+import com.example.mycomposecookbook.screen.home.userDashboard.UserProfile
 import com.example.mycomposecookbook.ui.theme.MyComposeCookBookTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -64,10 +66,12 @@ class MainActivity : BaseComponentActivity() {
                         val vm = hiltViewModel<HomeViewModel>()
                         HomeScreen(navController, vm)
                     }
+
+                    composable("profile") {
+                        UserProfile(user = User(id="1","mkrupal09@gmail.com","Krupal","Mehta",""))
+                    }
                 }
             }
         }
-
-
     }
 }

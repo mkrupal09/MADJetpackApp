@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,12 +26,15 @@ import com.example.mycomposecookbook.util.component.MyEditText
 import com.example.mycomposecookbook.util.component.TopBarScreen
 
 @Composable
-@Preview(name="Asd")
+@Preview(name = "Asd")
 fun RegistrationScreen(
     navController: NavController = NavController(LocalContext.current),
     email: String = ""
 ) {
     val emailX = remember { mutableStateOf(email) }
+    val firstName = remember {
+        mutableStateOf("")
+    }
     val scrollState = rememberScrollState()
     val agreeCondition = remember {
         mutableStateOf(false)
@@ -56,7 +58,7 @@ fun RegistrationScreen(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.scrollable(scrollState, Orientation.Horizontal)
             ) {
-                MyEditText(hint = "First Name", margin = 10.dp) {
+                MyEditText(hint = "First Name", margin = 10.dp, value = firstName) {
 
                 }
                 MyEditText(hint = "Last Name", margin = 10.dp) {

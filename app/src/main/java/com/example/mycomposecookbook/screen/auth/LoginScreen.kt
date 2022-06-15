@@ -2,17 +2,22 @@ package com.example.mycomposecookbook.screen.auth
 
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -20,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.mycomposecookbook.R
 import com.example.mycomposecookbook.util.component.MyButton
 import com.example.mycomposecookbook.util.component.MyEditText
@@ -70,7 +76,7 @@ fun LoginScreen(
         Column(verticalArrangement = Arrangement.Center) {
             AnimatedVisibility(
                 visible = logoVisible,
-                enter = slideInHorizontally(animationSpec = tween(durationMillis = 3000) ) {
+                enter = slideInHorizontally(animationSpec = tween(durationMillis = 3000)) {
 
                     with(density) { -100.dp.roundToPx() }
                 }) {
@@ -124,11 +130,35 @@ fun LoginScreen(
                 navController.navigate("forgot")
             }
 
-            Spacer(modifier = Modifier.weight(1.0f))
+            LazyHorizontalGrid(
+                contentPadding = PaddingValues(0.dp),
+                rows = GridCells.Fixed(3),
+                modifier = Modifier
+                    .height(200.dp)
+                    .padding(top = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(5.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                content = {
+                    items(50, key = {
+                        it
+                    }) { item ->
+                        AsyncImage(
+                            model = "https://randomuser.me/api/portraits/men/$item.jpg",
+                            contentDescription = "image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .border(1.dp, Color.Red, CircleShape)
+                                .padding(2.dp)
+                                .clip(CircleShape)
+                        )
+                    }
+                })
 
+            Spacer(modifier = Modifier.weight(1.0f))
             MyButton(value = "Create an account", margin = 10.dp) {
                 navController.navigate("register?email=${email.value}")
             }
+
 
             //to animate logo
             LaunchedEffect(key1 = Unit, block = {

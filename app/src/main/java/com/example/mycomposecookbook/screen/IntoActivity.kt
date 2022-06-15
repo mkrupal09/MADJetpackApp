@@ -18,8 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,10 +28,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.mycomposecookbook.R
 import com.example.mycomposecookbook.screen.auth.MainActivity
 import com.example.mycomposecookbook.ui.theme.MyComposeCookBookTheme
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.HorizontalPagerIndicator
-import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.pager.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
@@ -44,6 +40,8 @@ class IntoActivity : ComponentActivity() {
             val uiController = rememberSystemUiController()
             val pagerState = rememberPagerState()
             val coroutineScope = rememberCoroutineScope()
+            
+
             MyComposeCookBookTheme {
                 Box {
                     HorizontalPager(

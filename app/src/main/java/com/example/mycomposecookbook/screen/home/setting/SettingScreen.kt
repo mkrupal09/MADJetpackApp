@@ -26,7 +26,7 @@ import com.example.mycomposecookbook.screen.scopedstorage.ScopedStorageActivity
 @Composable
 @Preview
 fun SettingScreen(navController: NavController = NavController(LocalContext.current)) {
-    val context= LocalContext.current
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,18 +85,20 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
                 mutableStateOf(false)
             }
 
-            Text(text = "Profile", modifier = Modifier.constrainAs(profile) {
-                start.linkTo(guidelineStart)
-            }.clickable {
-                openProfileScreen(context)
-            }, fontSize = 30.sp)
+            Text(text = "Profile", modifier = Modifier
+                .constrainAs(profile) {
+                    start.linkTo(guidelineStart)
+                }
+                .clickable {
+                    /*openProfileScreen(context)*/
+                    navController.navigate("profile")
+                }, fontSize = 30.sp)
             Text(text = "Faq", modifier = Modifier.constrainAs(faq) {
 
                 /* start.linkTo(profile.end)*/
                 start.linkTo(guidelineStart)
             }, fontSize = 30.sp)
             Text(text = "Privacy policy", modifier = Modifier.constrainAs(privacy) {
-
                 /*start.linkTo(faq.end, 20.dp)*/
                 start.linkTo(guidelineStart)
             }, fontSize = 30.sp)
@@ -126,7 +128,6 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
                     })
             }
 
-
             Text(text = "Version 1.0", modifier = Modifier.constrainAs(version) {
                 bottom.linkTo(parent.bottom, 10.dp)
                 start.linkTo(parent.start)
@@ -134,6 +135,7 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
             })
         }
     }
+
 }
 
 

@@ -1,11 +1,12 @@
 package com.example.mycomposecookbook.util.component
 
-import android.app.AlertDialog
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.CornerRadius
@@ -25,12 +27,14 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.mycomposecookbook.R
 import com.example.mycomposecookbook.ui.theme.Purple200
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -100,6 +104,7 @@ fun MyEditText(
 
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun MyButton(
@@ -108,8 +113,12 @@ fun MyButton(
     borderd: Boolean = false,
     onClick: () -> Unit = {}
 ) {
+
+
     Button(
-        onClick = onClick,
+        onClick = {
+            onClick()
+        },
         modifier = Modifier
             .apply {
                 if (borderd) {
@@ -120,7 +129,7 @@ fun MyButton(
             .padding(margin),
         shape = RoundedCornerShape(10.dp),
     ) {
-        Text(text = value.uppercase(), modifier = Modifier.padding(8.dp))
+        Text(text = value.uppercase(), modifier = Modifier.padding(8.dp), style = TextStyle())
     }
 }
 
@@ -149,8 +158,11 @@ fun TopBarScreen(
                 Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
             }
         })
-    }) {
-        content()
+    }) { padd ->
+        Box(Modifier.padding(padd))
+        {
+            content()
+        }
     }
 }
 
