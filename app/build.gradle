@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -33,7 +34,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug{
+        debug {
             buildConfigField("String", "BASE_URL", "\"" + properties['BASE_URL'] + "\"")
         }
     }
@@ -102,4 +103,20 @@ dependencies {
 
     // If using indicators, also depend on
     implementation "com.google.accompanist:accompanist-pager-indicators:0.24.10-beta"
+
+
+    // Kotlin + coroutines
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
+
+
+    def nav_version = "2.4.2"
+    // Navigation graph
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    def appcompat_version = "1.4.2"
+
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    // For loading and tinting drawables on older versions of the platform
+    implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
 }
