@@ -236,31 +236,32 @@ class MediaSelectionActivity : ComponentActivity() {
     /**
      * to delete image from mediastore
      */
-    private suspend fun deletePhotoFromExternalStorage(photoUri: Uri) {
-        withContext(Dispatchers.IO) {
-            try {
-                contentResolver.delete(photoUri, null, null)
-            } catch (e: SecurityException) {
-                val intentSender = when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                        MediaStore.createDeleteRequest(
-                            contentResolver,
-                            listOf(photoUri)
-                        ).intentSender
-                    }
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                        val recoverableSecurityException = e as? RecoverableSecurityException
-                        recoverableSecurityException?.userAction?.actionIntent?.intentSender
-                    }
-                    else -> null
+    private fun deletePhotoFromExternalStorage(photoUri: Uri) {
+
+        try {
+            contentResolver.delete(photoUri, null, null)
+        } catch (e: SecurityException) {
+            val intentSender = when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                    MediaStore.createTrashRequest(
+                        contentResolver,
+                        listOf(photoUri),
+                        true
+                    ).intentSender
                 }
-                intentSender?.let { sender ->
-                    deleteSenderResult.launch(
-                        IntentSenderRequest.Builder(sender).build()
-                    )
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                    val recoverableSecurityException = e as? RecoverableSecurityException
+                    recoverableSecurityException?.userAction?.actionIntent?.intentSender
                 }
+                else -> null
+            }
+            intentSender?.let { sender ->
+                deleteSenderResult.launch(
+                    IntentSenderRequest.Builder(sender).build()
+                )
             }
         }
+
     }
 
     /**

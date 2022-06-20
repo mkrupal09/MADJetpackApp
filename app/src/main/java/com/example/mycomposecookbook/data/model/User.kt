@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class User(
     @SerializedName("id")
-    val id: String,
+    var id: String,
 
     @SerializedName("email")
     val email: String,
@@ -25,6 +25,9 @@ class UserPreviewParameter : PreviewParameterProvider<User> {
         get() = sequenceOf(
             User("1", "krupal@grr.la", "krupal", "mehta", "https://picsum.photos/200/300"),
             User("1", "krupal@grr.la", "krupal", "mehta", "https://picsum.photos/200/300")
+
         )
 
+
 }
+

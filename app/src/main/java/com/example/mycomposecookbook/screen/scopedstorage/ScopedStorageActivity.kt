@@ -1,13 +1,14 @@
 package com.example.mycomposecookbook.screen.scopedstorage
 
-import android.Manifest
 import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.provider.Settings
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.spring
@@ -37,6 +38,7 @@ import com.example.mycomposecookbook.screen.base.BaseComponentActivity
 import com.example.mycomposecookbook.ui.theme.MyComposeCookBookTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.*
 
@@ -52,7 +54,41 @@ class ScopedStorageActivity : BaseComponentActivity() {
                 Content()
             }
         }
+/*
+        val dir = Environment.getExternalStoragePublicDirectory()
+
+        getExternalFilesDir()
+        val newDir = File(dir, "myappx")
+        if (newDir.exists().not()) {
+            newDir.mkdir()
+        }*/
+
+
+        /*saveFileUsingSAF()*/
+
+        /*requestPermissions(arrayOf(Manifest.permission.ACCESS_MEDIA_LOCATION),101)*/
     }
+
+    suspend fun fun1(): String {
+        delay(2000)
+        return "fun 1"
+    }
+
+    suspend fun fun2(): String {
+        delay(1000)
+        return "fun 2"
+    }
+
+    suspend fun fun3(): String {
+        delay(100)
+        return "fun 3"
+    }
+
+    fun openSettingManageExternalStorage() {
+        val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+        startActivity(intent)
+    }
+
 
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
@@ -218,7 +254,17 @@ class ScopedStorageActivity : BaseComponentActivity() {
         }
 
     private fun pickImageFromMediaStore() {
-        mediaStorePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+
+        //It will display images which created by own app
+        mediaStoreLauncher.launch(
+            Intent(
+                this@ScopedStorageActivity,
+                MediaSelectionActivity::class.java
+            )
+        )
+
+        //If you want to display all shared images then it requires permission
+        /*mediaStorePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)*/
     }
 
 
@@ -234,15 +280,15 @@ class ScopedStorageActivity : BaseComponentActivity() {
 
 
     private fun setImageUri(): Uri {
-        /*val dir =
-            getExternalFilesDir(null)!! // Android>Data>(packagename)>files>(Your file saved here)*/
+        /*/ *val dir =*/
+        getExternalFilesDir(null)!! // Android>Data>(packagename)>files>(Your file saved here)*/
         /* val dir =
              getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) // Android>Data>(packagename)>files>DCIM>(Your file saved here)*/
 
 
         //val dir = externalCacheDir!! // Android>Data>(packagename)>cache>(Your file saved here)*/
 
-        val dir = externalMediaDirs.first()
+        val dir = externalCacheDir
 
 
         val folder = File(dir!!.absolutePath)
@@ -286,7 +332,7 @@ class ScopedStorageActivity : BaseComponentActivity() {
         currentUri: Uri,
         filename: String = "screenshot.jpg",
         mimeType: String = "image/jpeg",
-        directory: String = Environment.DIRECTORY_DOWNLOADS + "/ScopedStorage",
+        directory: String = Environment.DIRECTORY_PICTURES + "/ScopedStorage",
         mediaContentUri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     ) {
         if (File(directory).exists().not()) {
@@ -317,6 +363,7 @@ class ScopedStorageActivity : BaseComponentActivity() {
 
         val inputStream = contentResolver.openInputStream(currentUri)
         copy(inputStream, imageOutStream)
+
     }
 
 
@@ -341,5 +388,24 @@ class ScopedStorageActivity : BaseComponentActivity() {
             count += n.toLong()
         }
         return count
+    }
+
+
+    private val saveFileUsingSAFLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            contentResolver.openOutputStream(it.data?.data!!).use { it ->
+                it?.write("teststring here".toByteArray(Charsets.UTF_8))
+            }
+
+        }
+
+    private fun saveFileUsingSAF() {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TITLE, "invoice.txt")
+            putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOCUMENTS)
+        }
+        saveFileUsingSAFLauncher.launch(intent)
     }
 }

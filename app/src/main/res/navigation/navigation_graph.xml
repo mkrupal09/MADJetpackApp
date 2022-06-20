@@ -12,21 +12,21 @@
 
         <action
             android:id="@+id/actionFragAToB"
-            app:destination="@id/fragmentB">
-
-            <argument
-                android:name="name"
-                android:defaultValue="empty"
-                app:argType="string"
-                app:nullable="false" />
-        </action>
+            app:destination="@id/fragmentB"></action>
     </fragment>
     <fragment
         android:id="@+id/fragmentB"
         android:name="com.example.mycomposecookbook.example.FragmentB"
         android:label="FragmentB">
+
+
         <action
             android:id="@+id/actionFragBToA"
             app:destination="@id/fragmentA" />
+        <argument
+            android:name="namex"
+            android:defaultValue="namex"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>
