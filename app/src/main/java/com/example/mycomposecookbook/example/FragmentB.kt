@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment
 class FragmentB : Fragment() {
 
 
+
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
