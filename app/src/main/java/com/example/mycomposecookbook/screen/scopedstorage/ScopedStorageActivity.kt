@@ -175,15 +175,16 @@ class ScopedStorageActivity : BaseComponentActivity() {
 
     private fun pickImageUsingSAF() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.type = "image/*"
+        //intent.type = "image/*"
+        intent.type = "*/*"
 
         //If you not specify all mimetype will be taken
-        val mimeTypes = arrayOf(
-            "image/png",
-            "image/jpg",
-            "image/jpeg"
-        )
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+        //val mimeTypes = arrayOf(
+        //    "image/png",
+         //   "image/jpg",
+         //   "image/jpeg"
+       // )
+        //intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -224,11 +225,11 @@ class ScopedStorageActivity : BaseComponentActivity() {
     //Image picker from camera
     //No write or read permission needed
     private lateinit var imageUri: Uri
-    private var imgPath: String = ""
+    /*private var imgPath: String = ""*/
 
     private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            selectedImage.value = imgPath
+            selectedImage.value = imageUri.toString()
         }
 
 
@@ -257,7 +258,7 @@ class ScopedStorageActivity : BaseComponentActivity() {
             file
         )
 
-        imgPath = file.absolutePath
+        /*imgPath = file.absolutePath*/
         return imageUri
     }
 
