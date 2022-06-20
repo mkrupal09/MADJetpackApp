@@ -1,6 +1,8 @@
 package com.example.mycomposecookbook.screen.scopedstorage
 
+import android.content.ContentResolver
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -9,6 +11,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.Settings
+import android.webkit.MimeTypeMap
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.spring
@@ -152,6 +155,10 @@ class ScopedStorageActivity : BaseComponentActivity() {
                         }
                         .align(Alignment.CenterHorizontally)
                 )
+                Text(
+                    text = "Uri:" + selectedImage.value + "\nType : " + Uri.parse(selectedImage.value)
+                        .getMimeType(this@ScopedStorageActivity)
+                )
 
                 Text(
                     text = "Andrew Joseph",
@@ -206,6 +213,12 @@ class ScopedStorageActivity : BaseComponentActivity() {
             }) {
                 Text(text = "Save to shared storage")
             }
+
+            Button(onClick = {
+                saveFileUsingSAF()
+            }) {
+                Text(text = "Save pdf file using saf")
+            }
         }
     }
 
@@ -217,9 +230,9 @@ class ScopedStorageActivity : BaseComponentActivity() {
         //If you not specify all mimetype will be taken
         //val mimeTypes = arrayOf(
         //    "image/png",
-         //   "image/jpg",
-         //   "image/jpeg"
-       // )
+        //   "image/jpg",
+        //   "image/jpeg"
+        // )
         //intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
@@ -229,8 +242,35 @@ class ScopedStorageActivity : BaseComponentActivity() {
     }
 
     private fun pickImageFromCamera() {
+
+        val dir =
+            getExternalFilesDir(Environment.DIRECTORY_MOVIES)!! // Android>Data>(packagename)>files>(Your file saved here)*/
+        /* val dir =
+             getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) // Android>Data>(packagename)>files>DCIM>(Your file saved here)*/
+
+
+        //val dir = externalCacheDir!! // Android>Data>(packagename)>cache>(Your file saved here)*/
+
+        //val dir = externalCacheDir
+
+
+        val folder = File(dir.absolutePath)
+        folder.mkdirs()
+
+        val file = File(folder, "${System.currentTimeMillis()}.jpg")
+        if (file.exists())
+            file.delete()
+        file.createNewFile()
+        imageUri = FileProvider.getUriForFile(
+            this,
+            "$packageName.provider",
+            file
+        )
+
+        /*imgPath = file.absolutePath*/
+
         val takePhotoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, setImageUri())
+        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
         cameraLauncher.launch(takePhotoIntent)
     }
 
@@ -279,35 +319,6 @@ class ScopedStorageActivity : BaseComponentActivity() {
         }
 
 
-    private fun setImageUri(): Uri {
-        /*/ *val dir =*/
-        getExternalFilesDir(null)!! // Android>Data>(packagename)>files>(Your file saved here)*/
-        /* val dir =
-             getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) // Android>Data>(packagename)>files>DCIM>(Your file saved here)*/
-
-
-        //val dir = externalCacheDir!! // Android>Data>(packagename)>cache>(Your file saved here)*/
-
-        val dir = externalCacheDir
-
-
-        val folder = File(dir!!.absolutePath)
-        folder.mkdirs()
-
-        val file = File(folder, "${System.currentTimeMillis()}.jpg")
-        if (file.exists())
-            file.delete()
-        file.createNewFile()
-        imageUri = FileProvider.getUriForFile(
-            this,
-            "$packageName.provider",
-            file
-        )
-
-        /*imgPath = file.absolutePath*/
-        return imageUri
-    }
-
     private val safLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             val uri = it?.data?.data
@@ -316,10 +327,10 @@ class ScopedStorageActivity : BaseComponentActivity() {
                  * Take a persistable URI permission grant that has been offered. Once
                  * taken, the permission grant will be remembered across device reboots.
                  */
-                contentResolver.takePersistableUriPermission(
+                /*contentResolver.takePersistableUriPermission(
                     uri,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
+                )*/
                 selectedImage.value = uri.toString()
             } else {
                 /*setError(R.string.error_failed_pick_gallery_image)*/
@@ -394,7 +405,8 @@ class ScopedStorageActivity : BaseComponentActivity() {
     private val saveFileUsingSAFLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             contentResolver.openOutputStream(it.data?.data!!).use { it ->
-                it?.write("teststring here".toByteArray(Charsets.UTF_8))
+                //it?.write("teststring here".toByteArray(Charsets.UTF_8))
+                copyLarge(assets.open("Obs.pdf"), it!!)
             }
 
         }
@@ -402,10 +414,21 @@ class ScopedStorageActivity : BaseComponentActivity() {
     private fun saveFileUsingSAF() {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TITLE, "invoice.txt")
+            //type = "text/plain"
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_TITLE, "Obs.pdf")
             putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOCUMENTS)
         }
         saveFileUsingSAFLauncher.launch(intent)
+    }
+
+    fun Uri.getMimeType(context: Context): String? {
+        return when (scheme) {
+            ContentResolver.SCHEME_CONTENT -> context.contentResolver.getType(this)
+            ContentResolver.SCHEME_FILE -> MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                MimeTypeMap.getFileExtensionFromUrl(toString()).lowercase()
+            )
+            else -> null
+        }
     }
 }
