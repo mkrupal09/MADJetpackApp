@@ -13,6 +13,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,10 +24,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +52,9 @@ class ScopedStorageActivity : BaseComponentActivity() {
     private val selectedImage = mutableStateOf("")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        filesDir.absolutePath.toString()
+        cacheDir.absolutePath.toString()
         setContent {
 
             MyComposeCookBookTheme(darkTheme = false) {
@@ -121,6 +122,20 @@ class ScopedStorageActivity : BaseComponentActivity() {
             ProfileUi(coroutineScope, bottomSheetState)
         }
 
+
+        LaunchedEffect(key1 = true) {
+            Log.e("Effect", "Launched")
+        }
+
+        SideEffect {
+            Log.e("Effect", "Launched")
+        }
+
+        DisposableEffect(key1 = true) {
+            onDispose {
+                Log.e("Effect", "OnDispose")
+            }
+        }
     }
 
     @OptIn(ExperimentalMaterialApi::class)
