@@ -14,11 +14,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,6 +29,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -71,6 +75,13 @@ class MediaSelectionActivity : ComponentActivity() {
                             )
 
                             Spacer(modifier = Modifier.weight(1f))
+
+                            Text(text = "Trash", modifier = Modifier
+                                .clickable {
+
+                                }
+                                .align(Alignment.CenterVertically))
+
                             Icon(
                                 Icons.Filled.Refresh,
                                 contentDescription = "refresh",
@@ -104,7 +115,8 @@ class MediaSelectionActivity : ComponentActivity() {
             selectedIndex
         }
         Box(modifier = Modifier.fillMaxSize()) {
-            androidx.compose.foundation.lazy.grid.LazyVerticalGrid(columns = GridCells.Adaptive(150.dp),
+            LazyVerticalGrid(columns = GridCells.Adaptive(150.dp),
+                modifier = Modifier.padding(5.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 content = {
@@ -127,12 +139,22 @@ class MediaSelectionActivity : ComponentActivity() {
                                         selectedIndex.value = index
                                         /* mediaList[index] = model.copy(isSelected = sel)*/
                                     }
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(Color.Black)
                             )
                             Checkbox(checked = model.isSelected,
                                 onCheckedChange = {
                                     selectedIndex.value = index
                                     /*mediaList[index] = model.copy(isSelected = it)*/
                                 })
+
+                            Text(
+                                text = model.name,
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(5.dp),
+                                color = Color.White
+                            )
                         }
                     }
                 })
@@ -182,7 +204,7 @@ class MediaSelectionActivity : ComponentActivity() {
 
     private fun loadList() {
         showLoading.value = true
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch {
             val images = queryImageStorage()
             withContext(Dispatchers.Main) {
                 mediaList.clear()
@@ -245,8 +267,7 @@ class MediaSelectionActivity : ComponentActivity() {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                     MediaStore.createTrashRequest(
                         contentResolver,
-                        listOf(photoUri),
-                        true
+                        listOf(photoUri), true
                     ).intentSender
                 }
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
@@ -275,6 +296,10 @@ class MediaSelectionActivity : ComponentActivity() {
             MediaStore.Images.Media.DATE_TAKEN,
             MediaStore.Images.Media._ID
         )
+
+      /*  val selection = MediaStore.MediaColumns.IS_TRASHED + " = ?"
+        val selectionargs = arrayOf("1")*/
+
         val imageSortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
         val cursor = contentResolver.query(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -299,7 +324,97 @@ class MediaSelectionActivity : ComponentActivity() {
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                         id
                     )
-                    list.add(ImageModel(contentUri, contentUri.path.toString()))
+                    list.add(ImageModel(name, contentUri, contentUri.path.toString()))
+                }
+            } ?: kotlin.run {
+                Log.e("TAG", "Cursor is null!")
+            }
+        }
+        list
+    }
+
+    private suspend fun queryVideoStorage() = withContext(Dispatchers.IO) {
+        val list = arrayListOf<ImageModel>()
+        val imageProjection = arrayOf(
+            MediaStore.Video.Media.DISPLAY_NAME,
+            MediaStore.Video.Media.SIZE,
+            MediaStore.Video.Media.DATE_TAKEN,
+            MediaStore.Video.Media._ID
+        )
+
+
+        val imageSortOrder = "${MediaStore.Video.Media.DATE_TAKEN} DESC"
+        val cursor = contentResolver.query(
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            imageProjection,
+            null,
+            null,
+            imageSortOrder
+        )
+        cursor.use {
+            it?.let {
+                val idColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
+                val nameColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
+                val sizeColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
+                val dateColumn = it.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_TAKEN)
+
+                while (it.moveToNext()) {
+                    val id = it.getLong(idColumn)
+                    val name = it.getString(nameColumn)
+                    val size = it.getString(sizeColumn)
+                    val date = it.getString(dateColumn)
+                    val contentUri = ContentUris.withAppendedId(
+                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                        id
+                    )
+                    list.add(ImageModel(name, contentUri, contentUri.path.toString()))
+                }
+            } ?: kotlin.run {
+                Log.e("TAG", "Cursor is null!")
+            }
+        }
+        list
+    }
+
+    /**
+     * TO retrieve images from mediastore
+     */
+    private suspend fun queryImageVideoAudioStorage() = withContext(Dispatchers.IO) {
+        val list = arrayListOf<ImageModel>()
+        val projection = arrayOf(
+            MediaStore.Files.FileColumns._ID,
+            MediaStore.Files.FileColumns.DISPLAY_NAME,
+            MediaStore.Files.FileColumns.SIZE,
+            MediaStore.Files.FileColumns.DATE_TAKEN,
+            MediaStore.Files.FileColumns.MEDIA_TYPE,
+            MediaStore.Files.FileColumns.MIME_TYPE,
+        )
+
+        val imageSortOrder = "${MediaStore.Files.FileColumns.DATE_TAKEN} DESC"
+        val cursor = contentResolver.query(
+            MediaStore.Files.getContentUri("external"),
+            projection,
+            null,
+            null,
+            imageSortOrder
+        )
+        cursor.use {
+            it?.let {
+                val idColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
+                val nameColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME)
+                val sizeColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE)
+                val dateColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_TAKEN)
+
+                while (it.moveToNext()) {
+                    val id = it.getLong(idColumn)
+                    val name = it.getString(nameColumn)
+                    val size = it.getString(sizeColumn)
+                    val date = it.getString(dateColumn)
+                    val contentUri = ContentUris.withAppendedId(
+                        MediaStore.Files.getContentUri("external"),
+                        id
+                    )
+                    list.add(ImageModel(name, contentUri, contentUri.path.toString()))
                 }
             } ?: kotlin.run {
                 Log.e("TAG", "Cursor is null!")

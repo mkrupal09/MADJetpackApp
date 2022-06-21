@@ -1,5 +1,6 @@
 package com.example.mycomposecookbook.screen.scopedstorage
 
+import android.Manifest
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
@@ -296,15 +297,15 @@ class ScopedStorageActivity : BaseComponentActivity() {
     private fun pickImageFromMediaStore() {
 
         //It will display images which created by own app
-        mediaStoreLauncher.launch(
+        /*mediaStoreLauncher.launch(
             Intent(
                 this@ScopedStorageActivity,
                 MediaSelectionActivity::class.java
             )
-        )
+        )*/
 
         //If you want to display all shared images then it requires permission
-        /*mediaStorePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)*/
+        mediaStorePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
 
