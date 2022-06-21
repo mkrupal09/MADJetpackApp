@@ -455,8 +455,7 @@ class ScopedStorageActivity : BaseComponentActivity() {
         }
 
     private fun cropImage() {
-
-        val dir = File(getExternalFilesDir(null), "Cropped")
+        val dir = File(filesDir, "Cropped")
         if (dir.exists().not())
             dir.mkdir()
         val file = File(dir, "cropped.jpg")
@@ -464,6 +463,5 @@ class ScopedStorageActivity : BaseComponentActivity() {
             UCrop.of(Uri.parse(selectedImage.value), Uri.fromFile(file))
                 .getIntent(this)
         )
-
     }
 }
