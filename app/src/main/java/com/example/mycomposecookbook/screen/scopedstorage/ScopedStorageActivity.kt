@@ -365,17 +365,14 @@ class ScopedStorageActivity : BaseComponentActivity() {
         }
 
 
-    @Suppress("DEPRECATION")
     private fun saveImageToMediaStore(
-        currentUri: Uri,
-        filename: String = "screenshot.jpg",
-        mimeType: String = "image/jpeg",
-        directory: String = Environment.DIRECTORY_PICTURES + "/ScopedStorage",
-        mediaContentUri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        currentUri: Uri, filename: String = "screenshot.jpg", mimeType: String = "image/jpeg",
+        directory: String = Environment.DIRECTORY_PICTURES + "/ScopedStorage", mediaContentUri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     ) {
         if (File(directory).exists().not()) {
             File(directory).mkdir()
         }
+
         val imageOutStream: OutputStream
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val values = ContentValues().apply {
@@ -383,7 +380,6 @@ class ScopedStorageActivity : BaseComponentActivity() {
                 put(MediaStore.Images.Media.MIME_TYPE, mimeType)
                 put(MediaStore.Images.Media.RELATIVE_PATH, directory)
             }
-
             contentResolver.run {
                 val uri =
                     contentResolver.insert(mediaContentUri, values)
@@ -396,12 +392,9 @@ class ScopedStorageActivity : BaseComponentActivity() {
             imageOutStream = FileOutputStream(image)
         }
 
-
         /*imageOutStream.use { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it) }*/
-
         val inputStream = contentResolver.openInputStream(currentUri)
         copy(inputStream, imageOutStream)
-
     }
 
 
