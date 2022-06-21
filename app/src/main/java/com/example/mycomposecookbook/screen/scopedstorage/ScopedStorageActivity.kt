@@ -1,6 +1,7 @@
 package com.example.mycomposecookbook.screen.scopedstorage
 
 import android.Manifest
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
@@ -40,6 +41,7 @@ import coil.compose.AsyncImage
 import com.example.mycomposecookbook.R
 import com.example.mycomposecookbook.screen.base.BaseComponentActivity
 import com.example.mycomposecookbook.ui.theme.MyComposeCookBookTheme
+import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -182,43 +184,52 @@ class ScopedStorageActivity : BaseComponentActivity() {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            fun onAction() {
+            fun dismissBottomSheet() {
                 coroutineScope.launch {
                     scaffoldState.bottomSheetState.collapse()
                 }
             }
 
             Button(onClick = {
-                onAction()
+                dismissBottomSheet()
                 pickImageUsingSAF()
             }) {
                 Text(text = "Pick image using SAF")
             }
 
             Button(onClick = {
-                onAction()
+                dismissBottomSheet()
                 pickImageFromCamera()
             }) {
                 Text(text = "Pick image from camera")
             }
 
             Button(onClick = {
-                onAction()
+                dismissBottomSheet()
                 pickImageFromMediaStore()
             }) {
                 Text(text = "Pick image using MediaStore")
             }
 
             Button(onClick = {
+                dismissBottomSheet()
                 saveImageToMediaStore(imageUri)
             }) {
                 Text(text = "Save to shared storage")
             }
 
             Button(onClick = {
+                dismissBottomSheet()
                 saveFileUsingSAF()
             }) {
                 Text(text = "Save pdf file using saf")
+            }
+
+            Button(onClick = {
+                dismissBottomSheet()
+                cropImage()
+            }) {
+                Text(text = "Crop Image")
             }
         }
     }
@@ -431,5 +442,28 @@ class ScopedStorageActivity : BaseComponentActivity() {
             )
             else -> null
         }
+    }
+
+
+    private val cropLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val croppedUri = UCrop.getOutput(it.data!!)
+                imageUri = croppedUri!!
+                selectedImage.value = croppedUri.toString()
+            }
+        }
+
+    private fun cropImage() {
+
+        val dir = File(getExternalFilesDir(null), "Cropped")
+        if (dir.exists().not())
+            dir.mkdir()
+        val file = File(dir, "cropped.jpg")
+        cropLauncher.launch(
+            UCrop.of(Uri.parse(selectedImage.value), Uri.fromFile(file))
+                .getIntent(this)
+        )
+
     }
 }
