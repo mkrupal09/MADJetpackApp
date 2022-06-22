@@ -186,7 +186,7 @@ class MediaSelectionActivity : ComponentActivity() {
                     }) {
                         Text(text = "Delete", color = Color.White)
                     }
-                    
+
                 }
             }
         }
@@ -205,7 +205,7 @@ class MediaSelectionActivity : ComponentActivity() {
     private fun loadList() {
         showLoading.value = true
         lifecycleScope.launch {
-            val images = queryImageVideoAudioStorage()
+            val images = queryImageStorage()
             withContext(Dispatchers.Main) {
                 mediaList.clear()
                 mediaList.addAll(images)
@@ -296,9 +296,6 @@ class MediaSelectionActivity : ComponentActivity() {
             MediaStore.Images.Media.DATE_TAKEN,
             MediaStore.Images.Media._ID
         )
-
-        /*  val selection = MediaStore.MediaColumns.IS_TRASHED + " = ?"
-          val selectionargs = arrayOf("1")*/
 
         val imageSortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
         val cursor = contentResolver.query(

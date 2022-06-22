@@ -30,7 +30,7 @@ class MainActivity : BaseComponentActivity() {
                 val navController = rememberNavController()
 
                 /*NavHost to AnimatedNavHost for animation*/
-                NavHost(navController = navController, startDestination = "login") {
+                NavHost(navController = navController, startDestination = "home") {
                     //Here register all screen
                     composable(Screens.LoginScreen.route) {
                         val vm = hiltViewModel<AuthViewModel>()

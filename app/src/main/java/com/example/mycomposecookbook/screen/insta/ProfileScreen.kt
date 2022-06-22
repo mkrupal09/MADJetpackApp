@@ -160,17 +160,20 @@ class ProfileScreen : ComponentActivity() {
                 )
 
                 Row {
-                    Button(
+                    TextButton(
                         onClick = { },
                         modifier = Modifier
                             .background(Color.Transparent)
+                            .padding(top = 10.dp)
+                            .weight(1f)
                             .border(2.dp, Color.Gray, RoundedCornerShape(5.dp))
+
                     ) {
 
-                        Text(text = "Edit Profile")
+                        Text(text = "Edit Profile", color = Color.White)
                     }
                 }
-                Row {
+                Row(modifier = Modifier.padding(top = 10.dp)) {
                     Text(text = "Story highlights", color = Color.White, fontSize = 16.sp)
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
@@ -274,7 +277,7 @@ class ProfileScreen : ComponentActivity() {
                     model = item, contentDescription = "image",
                     modifier = Modifier
                         .size(50.dp)
-                        .border(2.dp,  storieBrush(), CircleShape)
+                        .border(2.dp, storieBrush(), CircleShape)
                         .padding(4.dp)
                         .clip(CircleShape)
                         .background(Color.White)

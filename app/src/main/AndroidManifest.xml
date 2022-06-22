@@ -6,7 +6,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
 
 
     <application
@@ -33,10 +32,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".screen.insta.ProfileScreen"
-            android:theme="@style/Theme.MyComposeCookBook"
-            android:exported="true">
-
+        <activity
+            android:name=".screen.insta.ProfileScreen"
+            android:exported="true"
+            android:theme="@style/Theme.MyComposeCookBook">
 
         </activity>
 
