@@ -48,47 +48,15 @@ import java.io.*
 
 class ScopedStorageActivity : BaseComponentActivity() {
 
-
     private val selectedImage = mutableStateOf("")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        filesDir.absolutePath.toString()
-        cacheDir.absolutePath.toString()
         setContent {
-
             MyComposeCookBookTheme(darkTheme = false) {
                 Content()
             }
         }
-/*
-        val dir = Environment.getExternalStoragePublicDirectory()
-
-        getExternalFilesDir()
-        val newDir = File(dir, "myappx")
-        if (newDir.exists().not()) {
-            newDir.mkdir()
-        }*/
-
-
-        /*saveFileUsingSAF()*/
-
-        /*requestPermissions(arrayOf(Manifest.permission.ACCESS_MEDIA_LOCATION),101)*/
-    }
-
-    suspend fun fun1(): String {
-        delay(2000)
-        return "fun 1"
-    }
-
-    suspend fun fun2(): String {
-        delay(1000)
-        return "fun 2"
-    }
-
-    suspend fun fun3(): String {
-        delay(100)
-        return "fun 3"
     }
 
     fun openSettingManageExternalStorage() {
@@ -101,7 +69,6 @@ class ScopedStorageActivity : BaseComponentActivity() {
     @Composable
     @Preview
     fun Content() {
-
         val bottomSheetState =
             rememberBottomSheetState(BottomSheetValue.Collapsed, animationSpec = spring())
 
@@ -122,20 +89,6 @@ class ScopedStorageActivity : BaseComponentActivity() {
             ProfileUi(coroutineScope, bottomSheetState)
         }
 
-
-        LaunchedEffect(key1 = true) {
-            Log.e("Effect", "Launched")
-        }
-
-        SideEffect {
-            Log.e("Effect", "Launched")
-        }
-
-        DisposableEffect(key1 = true) {
-            onDispose {
-                Log.e("Effect", "OnDispose")
-            }
-        }
     }
 
     @OptIn(ExperimentalMaterialApi::class)
@@ -364,7 +317,6 @@ class ScopedStorageActivity : BaseComponentActivity() {
             }
         }
 
-
     private fun saveImageToMediaStore(
         currentUri: Uri, filename: String = "screenshot.jpg", mimeType: String = "image/jpeg",
         directory: String = Environment.DIRECTORY_PICTURES + "/ScopedStorage", mediaContentUri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -406,11 +358,9 @@ class ScopedStorageActivity : BaseComponentActivity() {
         } else count.toInt()
     }
 
-
-    private val DEFAULT_BUFFER_SIZE = 1024 * 4
-
     @Throws(IOException::class)
     fun copyLarge(input: InputStream, output: OutputStream): Long {
+        val DEFAULT_BUFFER_SIZE = 1024 * 4
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         var count: Long = 0
         var n: Int
