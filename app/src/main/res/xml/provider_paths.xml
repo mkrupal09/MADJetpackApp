@@ -2,13 +2,15 @@
 <paths>
     <files-path
         name="internal_files"
-        path="." />
+        path="." /> <!--getFilesDir-->
+    <!--
+
     <external-cache-path
         name="external_cache_files"
         path="." />
     <external-files-path
         name="external_files_files"
-        path="." />
+        path="." />-->
     <external-path
         name="external_files"
         path="." />

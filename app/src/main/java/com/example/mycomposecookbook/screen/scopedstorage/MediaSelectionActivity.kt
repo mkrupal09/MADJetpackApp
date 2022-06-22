@@ -76,12 +76,6 @@ class MediaSelectionActivity : ComponentActivity() {
 
                             Spacer(modifier = Modifier.weight(1f))
 
-                            Text(text = "Trash", modifier = Modifier
-                                .clickable {
-
-                                }
-                                .align(Alignment.CenterVertically))
-
                             Icon(
                                 Icons.Filled.Refresh,
                                 contentDescription = "refresh",
@@ -192,6 +186,7 @@ class MediaSelectionActivity : ComponentActivity() {
                     }) {
                         Text(text = "Delete", color = Color.White)
                     }
+                    
                 }
             }
         }
@@ -201,11 +196,16 @@ class MediaSelectionActivity : ComponentActivity() {
         }
     }
 
+    private fun trash() {
+
+
+    }
+
 
     private fun loadList() {
         showLoading.value = true
         lifecycleScope.launch {
-            val images = queryImageStorage()
+            val images = queryImageVideoAudioStorage()
             withContext(Dispatchers.Main) {
                 mediaList.clear()
                 mediaList.addAll(images)
@@ -235,7 +235,7 @@ class MediaSelectionActivity : ComponentActivity() {
                 if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                     lifecycleScope.launch {
                         deletePhotoFromExternalStorage(
-                            mediaList[selectedIndex.value].uri ?: return@launch
+                            mediaList[selectedIndex.value].uri
                         )
                     }
                 }
@@ -265,9 +265,9 @@ class MediaSelectionActivity : ComponentActivity() {
         } catch (e: SecurityException) {
             val intentSender = when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                    MediaStore.createTrashRequest(
+                    MediaStore.createDeleteRequest(
                         contentResolver,
-                        listOf(photoUri), true
+                        listOf(photoUri)
                     ).intentSender
                 }
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
@@ -297,8 +297,8 @@ class MediaSelectionActivity : ComponentActivity() {
             MediaStore.Images.Media._ID
         )
 
-      /*  val selection = MediaStore.MediaColumns.IS_TRASHED + " = ?"
-        val selectionargs = arrayOf("1")*/
+        /*  val selection = MediaStore.MediaColumns.IS_TRASHED + " = ?"
+          val selectionargs = arrayOf("1")*/
 
         val imageSortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
         val cursor = contentResolver.query(
