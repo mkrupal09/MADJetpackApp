@@ -13,7 +13,6 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,7 +23,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +44,6 @@ import com.example.mycomposecookbook.ui.theme.MyComposeCookBookTheme
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.*
 
@@ -199,6 +200,12 @@ class ScopedStorageActivity : BaseComponentActivity() {
             }) {
                 Text(text = "Crop Image")
             }
+
+            Button(onClick = {
+                share()
+            }) {
+                Text(text = "Share")
+            }
         }
     }
 
@@ -215,9 +222,9 @@ class ScopedStorageActivity : BaseComponentActivity() {
         // )
         //intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        /*intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)*/
         safLauncher.launch(intent)
     }
 
@@ -258,7 +265,8 @@ class ScopedStorageActivity : BaseComponentActivity() {
     private val mediaStoreLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
         {
-            selectedImage.value = it.data?.getStringExtra("media") ?: ""
+            imageUri = Uri.parse(it.data?.getStringExtra("media") ?: "")
+            selectedImage.value = imageUri.toString()
         }
 
     private val mediaStorePermission =
@@ -318,8 +326,11 @@ class ScopedStorageActivity : BaseComponentActivity() {
         }
 
     private fun saveImageToMediaStore(
-        currentUri: Uri, filename: String = "screenshot.jpg", mimeType: String = "image/jpeg",
-        directory: String = Environment.DIRECTORY_PICTURES + "/ScopedStorage", mediaContentUri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        currentUri: Uri,
+        filename: String = "screenshot.jpg",
+        mimeType: String = "image/jpeg",
+        directory: String = Environment.DIRECTORY_PICTURES + "/ScopedStorage",
+        mediaContentUri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     ) {
         if (File(directory).exists().not()) {
             File(directory).mkdir()
@@ -357,6 +368,7 @@ class ScopedStorageActivity : BaseComponentActivity() {
             -1
         } else count.toInt()
     }
+
 
     @Throws(IOException::class)
     fun copyLarge(input: InputStream, output: OutputStream): Long {
@@ -421,5 +433,23 @@ class ScopedStorageActivity : BaseComponentActivity() {
             UCrop.of(Uri.parse(selectedImage.value), Uri.fromFile(file))
                 .getIntent(this)
         )
+    }
+
+    private fun share() {
+        //The exception will thrown FileUriExposedException
+        //So instead of file:// we need to provide content:// uri's
+        //this is only after Android N before it works with file://
+        val uri = when (imageUri.scheme) {
+            ContentResolver.SCHEME_FILE -> FileProvider.getUriForFile(
+                this,
+                "$packageName.provider",
+                File(imageUri.path!!)
+            )
+            else -> imageUri
+        }
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "image/jpeg"
+        intent.putExtra(Intent.EXTRA_STREAM, uri)
+        startActivity(Intent.createChooser(intent, "Share Image"))
     }
 }

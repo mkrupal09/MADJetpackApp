@@ -19,6 +19,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
+        android:preserveLegacyExternalStorage="true"
         android:theme="@style/Theme.MyComposeCookBook"
         tools:targetApi="31">
         <activity
@@ -31,12 +33,12 @@
         <activity android:name=".screen.insta.ProfileScreen"
             android:theme="@style/Theme.MyComposeCookBook"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
 

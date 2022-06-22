@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -237,7 +238,9 @@ class ProfileScreen : ComponentActivity() {
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(50.dp)
-                        .border(2.dp, Color.White, CircleShape)
+                        .border(
+                            2.dp, storieBrush(), CircleShape
+                        )
                         .clipToBounds()
                 ) {
 
@@ -260,7 +263,7 @@ class ProfileScreen : ComponentActivity() {
                     model = item, contentDescription = "image",
                     modifier = Modifier
                         .size(50.dp)
-                        .border(2.dp, Color.Blue, CircleShape)
+                        .border(2.dp,  storieBrush(), CircleShape)
                         .padding(4.dp)
                         .clip(CircleShape)
                         .background(Color.White)
@@ -371,5 +374,15 @@ class ProfileScreen : ComponentActivity() {
 
             }
         }
+    }
+
+    @Composable
+    fun storieBrush(): Brush {
+        return Brush.verticalGradient(
+            colors = listOf(
+                MaterialTheme.colors.primary,
+                MaterialTheme.colors.secondary
+            )
+        )
     }
 }
