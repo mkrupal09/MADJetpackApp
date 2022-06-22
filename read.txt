@@ -1,0 +1,219 @@
+pickImageUsingSaf()
+
+ val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        //intent.type = "image/*"
+        intent.type = "*/*"
+
+        //If you not specify all mimetype will be taken
+        //val mimeTypes = arrayOf(
+        //    "image/png",
+        //   "image/jpg",
+        //   "image/jpeg"
+        // )
+        //intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        safLauncher.launch(intent)
+
+
+
+  private val safLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val uri = it?.data?.data
+            if (uri != null) {
+                /**
+                 * Take a persistable URI permission grant that has been offered. Once
+                 * taken, the permission grant will be remembered across device reboots.
+                 */
+                /*contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )*/
+                selectedImage.value = uri.toString()
+            } else {
+                /*setError(R.string.error_failed_pick_gallery_image)*/
+            }
+        }
+
+
+=============================================
+
+pickImageFromCamera()
+
+  val dir =
+            getExternalFilesDir(Environment.DIRECTORY_MOVIES)!! // Android>Data>(packagename)>files>(Your file saved here)*/
+        /* val dir =
+             getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) // Android>Data>(packagename)>files>DCIM>(Your file saved here)*/
+
+
+        //val dir = externalCacheDir!! // Android>Data>(packagename)>cache>(Your file saved here)*/
+
+        //val dir = externalCacheDir
+
+
+        val folder = File(dir.absolutePath)
+        folder.mkdirs()
+
+        val file = File(folder, "${System.currentTimeMillis()}.jpg")
+        if (file.exists())
+            file.delete()
+        file.createNewFile()
+        imageUri = FileProvider.getUriForFile(
+            this,
+            "$packageName.provider",
+            file
+        )
+
+        /*imgPath = file.absolutePath*/
+
+        val takePhotoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+        cameraLauncher.launch(takePhotoIntent)
+
+
+ private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            selectedImage.value = imageUri.toString()
+        }
+
+============================================================
+
+saveImageToMediaStore()
+
+ if (File(directory).exists().not()) {
+            File(directory).mkdir()
+        }
+
+        val imageOutStream: OutputStream
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val values = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+                put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+                put(MediaStore.Images.Media.RELATIVE_PATH, directory)
+            }
+            contentResolver.run {
+                val uri =
+                    contentResolver.insert(mediaContentUri, values)
+                        ?: return
+                imageOutStream = openOutputStream(uri) ?: return
+            }
+        } else {
+            val imagePath = Environment.getExternalStoragePublicDirectory(directory).absolutePath
+            val image = File(imagePath, filename)
+            imageOutStream = FileOutputStream(image)
+        }
+
+        /*imageOutStream.use { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it) }*/
+        val inputStream = contentResolver.openInputStream(currentUri)
+        copy(inputStream, imageOutStream)
+
+=================================
+
+
+pickImageFromMediaStore()
+
+  //It will display images which created by own app
+        /*mediaStoreLauncher.launch(
+            Intent(
+                this@ScopedStorageActivity,
+                MediaSelectionActivity::class.java
+            )
+        )*/
+
+        //If you want to display all shared images then it requires permission
+        mediaStorePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+
+
+  private val mediaStoreLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        {
+            imageUri = Uri.parse(it.data?.getStringExtra("media") ?: "")
+            selectedImage.value = imageUri.toString()
+        }
+
+    private val mediaStorePermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (it) {
+                mediaStoreLauncher.launch(
+                    Intent(
+                        this@ScopedStorageActivity,
+                        MediaSelectionActivity::class.java
+                    )
+                )
+            }
+        }
+
+=============================================
+
+
+saveFileUsingSaf()
+
+   val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            //type = "text/plain"
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_TITLE, "Obs.pdf")
+            putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.DIRECTORY_DOCUMENTS)
+        }
+        saveFileUsingSAFLauncher.launch(intent)
+
+
+ private val saveFileUsingSAFLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            contentResolver.openOutputStream(it.data?.data!!).use { it ->
+                //it?.write("teststring here".toByteArray(Charsets.UTF_8))
+                copyLarge(assets.open("Obs.pdf"), it!!)
+            }
+
+        }
+
+
+============================
+
+
+cropImage()
+
+    val dir = File(filesDir, "Cropped")
+        if (dir.exists().not())
+            dir.mkdir()
+        val file = File(dir, "cropped.jpg")
+        cropLauncher.launch(
+            UCrop.of(Uri.parse(selectedImage.value), Uri.fromFile(file))
+                .getIntent(this)
+        )
+
+private val cropLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val croppedUri = UCrop.getOutput(it.data!!)
+                imageUri = croppedUri!!
+                selectedImage.value = croppedUri.toString()
+            }
+        }
+
+=======================================
+
+share()
+
+ //The exception will thrown FileUriExposedException
+        //So instead of file:// we need to provide content:// uri's
+        //this is only after Android N before it works with file://
+        val uri = when (imageUri.scheme) {
+            ContentResolver.SCHEME_FILE -> FileProvider.getUriForFile(
+                this,
+                "$packageName.provider",
+                File(imageUri.path!!)
+            )
+            else -> imageUri
+        }
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "image/jpeg"
+        intent.putExtra(Intent.EXTRA_STREAM, uri)
+        startActivity(Intent.createChooser(intent, "Share Image"))
+
+=============
+
+
+ fun openSettingManageExternalStorage() {
+        val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+        startActivity(intent)
+    }
