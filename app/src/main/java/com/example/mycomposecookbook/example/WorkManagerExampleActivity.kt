@@ -12,6 +12,7 @@ class WorkManagerExampleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation_demo)
 
+
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_container) as NavHostFragment
 
 

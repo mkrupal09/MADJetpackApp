@@ -1,23 +1,28 @@
 package com.example.mycomposecookbook.screen.insta
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,24 +36,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.mycomposecookbook.R
 import com.example.mycomposecookbook.data.model.User
 import com.example.mycomposecookbook.data.model.UserPreviewParameter
+import com.example.mycomposecookbook.screen.scopedstorage.ImageModel
 import com.example.mycomposecookbook.ui.theme.MyComposeCookBookTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class ProfileScreen : ComponentActivity() {
+
+    val myFlow = MutableStateFlow(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             MyComposeCookBookTheme(darkTheme = false) {
-
-
                 ProfileUi(
                     user = User(
                         "1",
@@ -72,6 +83,18 @@ class ProfileScreen : ComponentActivity() {
         val bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
         val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = bottomSheetState)
         val coroutineScope = rememberCoroutineScope()
+
+
+        val profileViewModel: ProfileViewModel = viewModel()
+
+        val postList = profileViewModel.postList.collectAsState().value.toMutableStateList()
+
+
+        val showStores = remember {
+            mutableStateOf(false)
+        }
+
+        val scrollState = rememberScrollState()
         var tabIndex by remember {
             mutableStateOf(0)
         }
@@ -86,30 +109,7 @@ class ProfileScreen : ComponentActivity() {
                 })
             },
             sheetContent = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-
-                    Box(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .background(
-                                color = Color.White,
-                                RoundedCornerShape(5.dp)
-                            )
-                            .width(120.dp)
-                            .height(10.dp)
-                            .align(Alignment.TopCenter)
-                    )
-
-                    Row(modifier = Modifier.align(Alignment.Center)) {
-                        Text(text = "Share", modifier = Modifier.padding(20.dp))
-                        Text(text = "Share", modifier = Modifier.padding(20.dp))
-                        Text(text = "Share", modifier = Modifier.padding(20.dp))
-                    }
-
-                }
+                PostBottomSheet()
             },
             sheetBackgroundColor = Color.Gray,
             sheetPeekHeight = 0.dp,
@@ -121,6 +121,7 @@ class ProfileScreen : ComponentActivity() {
                     .background(Color.Black)
                     .fillMaxSize()
                     .padding(15.dp)
+                    .scrollable(scrollState, Orientation.Vertical)
             ) {
                 Row {
                     Column {
@@ -154,7 +155,7 @@ class ProfileScreen : ComponentActivity() {
 
                 }
                 Text(
-                    text = user.firstName + user.lastName,
+                    text = "${user.firstName} ${user.lastName}",
                     fontSize = 18.sp,
                     color = Color.White
                 )
@@ -164,7 +165,7 @@ class ProfileScreen : ComponentActivity() {
                         onClick = { },
                         modifier = Modifier
                             .background(Color.Transparent)
-                            .padding(top = 10.dp)
+                            .padding(vertical = 10.dp)
                             .weight(1f)
                             .border(2.dp, Color.Gray, RoundedCornerShape(5.dp))
 
@@ -188,10 +189,15 @@ class ProfileScreen : ComponentActivity() {
                     fontSize = 16.sp
                 )
 
-                Stories(
-                    list = arrayListOf("1", "2", "3"),
-                    modifier = Modifier.padding(top = 10.dp)
-                )
+
+                AnimatedVisibility(visible = showStores.value) {
+                    Stories(
+                        list = arrayListOf("1", "2", "3"),
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                }
+
+
 
                 TabRow(
                     selectedTabIndex = tabIndex,
@@ -216,16 +222,57 @@ class ProfileScreen : ComponentActivity() {
                 }
 
                 if (tabIndex == 0) {
-                    PostsGrid(modifier = Modifier.padding(top = 10.dp))
+                    PostsGrid(modifier = Modifier.padding(top = 10.dp), postList)
                 } else {
-                    PostList(modifier = Modifier.padding(top = 10.dp)) {
-                        coroutineScope.launch {
-                            bottomSheetState.expand()
-                        }
-                    }
+                    PostList(
+                        modifier = Modifier.padding(top = 10.dp),
+                        postList, overflowClick = {
+                            coroutineScope.launch {
+                                bottomSheetState.expand()
+                            }
+                        })
                 }
 
             }
+        }
+
+        LaunchedEffect(key1 = Unit) {
+            profileViewModel.getPosts()
+            delay(3000)
+            showStores.value = true
+
+            for(i in 1..5){
+                delay(1500)
+                postList.add(ImageModel("1", Uri.parse(""),"",false,false,))
+            }
+        }
+    }
+
+    @Composable
+    private fun PostBottomSheet() {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .background(
+                        color = Color.White,
+                        RoundedCornerShape(5.dp)
+                    )
+                    .width(120.dp)
+                    .height(10.dp)
+                    .align(Alignment.TopCenter)
+            )
+
+            Row(modifier = Modifier.align(Alignment.Center)) {
+                Text(text = "Share", modifier = Modifier.padding(20.dp))
+                Text(text = "Share", modifier = Modifier.padding(20.dp))
+                Text(text = "Share", modifier = Modifier.padding(20.dp))
+            }
+
         }
     }
 
@@ -240,12 +287,14 @@ class ProfileScreen : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun Stories(list: ArrayList<String> = arrayListOf("1", "2", "3"), modifier: Modifier) {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = modifier
         ) {
+
 
             item {
                 Box(
@@ -284,35 +333,90 @@ class ProfileScreen : ComponentActivity() {
                         .border(2.dp, Color.White)
                 )
             }
+
+            items(10) { item ->
+
+                AsyncImage(
+                    model = item, contentDescription = "image",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .border(2.dp, storieBrush(), CircleShape)
+                        .padding(4.dp)
+                        .clip(CircleShape)
+                        .background(Color.White)
+                        .border(2.dp, Color.White)
+                )
+            }
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun PostsGrid(modifier: Modifier) {
+    fun PostsGrid(modifier: Modifier, list: SnapshotStateList<ImageModel>) {
+
+        var showFullImage by remember {
+            mutableStateOf(false)
+        }
+        var selectedImage by remember {
+            mutableStateOf("")
+        }
+        if (showFullImage) {
+            Dialog(
+                onDismissRequest = { showFullImage = false },
+                properties = DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = false
+                )
+            ) {
+                Box {
+                    AsyncImage(
+                        model = selectedImage,
+                        contentDescription = "Image",
+                        modifier = Modifier.size(500.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
         LazyVerticalGrid(
             modifier = modifier,
             columns = GridCells.Fixed(3),
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         )
+
+
         {
-            items(50) {
+            items(list) {
                 AsyncImage(
                     modifier = Modifier
                         .size(100.dp)
                         .clip(RoundedCornerShape(1.dp))
-                        .background(Color.White),
-                    model = R.drawable.jetpack,
-                    contentDescription = "image"
+                        .background(Color.White)
+                        .combinedClickable(onLongClick = {
+                            showFullImage = true
+                            selectedImage = "https://picsum.photos/id/237/200/300${it.name}.jpg"
+
+                        }, onClick = {
+
+                        }),
+                    model = "https://randomuser.me/api/portraits/men/${it.name}.jpg",
+                    contentDescription = "image",
+                    contentScale = ContentScale.Crop
                 )
             }
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun PostList(modifier: Modifier, overflowClick: () -> Unit) {
+    fun PostList(
+        modifier: Modifier,
+        list: SnapshotStateList<ImageModel>,
+        overflowClick: () -> Unit
+    ) {
         LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(5.dp)) {
-            items(10) {
+            itemsIndexed(list) { index, item ->
                 Column {
                     Row {
                         AsyncImage(
@@ -322,6 +426,7 @@ class ProfileScreen : ComponentActivity() {
                                 .size(30.dp)
                                 .clip(CircleShape)
                                 .background(Color.White)
+
                         )
 
                         Text(
@@ -345,7 +450,7 @@ class ProfileScreen : ComponentActivity() {
                 }
 
                 AsyncImage(
-                    model = R.drawable.jetpack,
+                    model = "https://randomuser.me/api/portraits/men/${item.name}.jpg",
                     contentDescription = "image",
                     modifier = Modifier
                         .padding(top = 5.dp)
@@ -353,13 +458,15 @@ class ProfileScreen : ComponentActivity() {
                         .background(Color.White)
                         .fillMaxWidth()
                         .height(300.dp)
-                )
+                        .combinedClickable(onDoubleClick = {
+                            list[index] = item.copy(isFavorite = true)
+                        }) {}, contentScale = ContentScale.Crop)
 
                 Row {
                     Icon(
                         painterResource(id = R.drawable.ic_favorite),
                         contentDescription = "favorite",
-                        tint = Color.White,
+                        tint = if (item.isFavorite) Color.Red else Color.White,
                         modifier = Modifier.padding(5.dp)
                     )
 

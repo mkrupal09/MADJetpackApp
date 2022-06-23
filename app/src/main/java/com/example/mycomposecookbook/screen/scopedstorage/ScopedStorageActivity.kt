@@ -13,6 +13,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
+import androidx.documentfile.provider.DocumentFile
 import coil.compose.AsyncImage
 import com.example.mycomposecookbook.R
 import com.example.mycomposecookbook.screen.base.BaseComponentActivity
@@ -58,11 +60,37 @@ class ScopedStorageActivity : BaseComponentActivity() {
                 Content()
             }
         }
+
+        askTreeWhatsapp()
     }
 
     fun openSettingManageExternalStorage() {
         val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
         startActivity(intent)
+    }
+
+    fun askTreeWhatsapp() {
+        val i = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        startActivityForResult(i, 123)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 123) {
+            val directoryUri = data?.data ?: return
+            contentResolver.takePersistableUriPermission(
+                directoryUri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+
+            val documentsTree = DocumentFile.fromTreeUri(application, directoryUri) ?: return
+            val childDocuments = documentsTree.listFiles()
+
+
+            for (i in childDocuments) {
+                Log.e("FIle&Folder From Tree", i.name.toString())
+            }
+        }
     }
 
 
