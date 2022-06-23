@@ -28,10 +28,18 @@ class MessageViewModel : ViewModel() {
 
             delay(2000)
             list.add(ChatMessage("0", "I'm fine. how you?", "0", messageType = "text"))
-            list.add(ChatMessage("0", "I'm fine. how you?", "0", messageType = "image"))
-            list.add(ChatMessage("0", "I'm fine. how you?", "1", messageType = "image"))
+            list.add(ChatMessage("0", "https://picsum.photos/200/300", "0", messageType = "image"))
+            list.add(ChatMessage("0", "https://picsum.photos/200/300", "1", messageType = "image"))
         }
     }
 
+
+    fun sendMessage(text: String) {
+        list.add(ChatMessage("0", text, myUserId, messageType = "text"))
+    }
+
+    fun sendMedia(url: String) {
+        list.add(ChatMessage("0", url, myUserId, messageType = "image"))
+    }
 
 }

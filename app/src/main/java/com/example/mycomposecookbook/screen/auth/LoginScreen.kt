@@ -40,8 +40,8 @@ fun LoginScreen(
 ) {
     rememberSystemUiController().setStatusBarColor(Color.White)
 
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("eve.holt@reqres.in") }
+    val password = remember { mutableStateOf("cityslicka") }
     val emailError = viewModel.emailError.collectAsState()
     val passwordError = viewModel.passwordError.collectAsState()
     val navigateHome = viewModel.navigateHome.collectAsState(false)
@@ -52,8 +52,6 @@ fun LoginScreen(
     val logoScale = remember {
         androidx.compose.animation.core.Animatable(0.5f)
     }
-
-
 
     LaunchedEffect(navigateHome.value) {
         if (navigateHome.value) {

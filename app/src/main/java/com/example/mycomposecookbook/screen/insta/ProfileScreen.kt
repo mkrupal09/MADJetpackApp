@@ -1,5 +1,6 @@
 package com.example.mycomposecookbook.screen.insta
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -241,9 +242,9 @@ class ProfileScreen : ComponentActivity() {
             delay(3000)
             showStores.value = true
 
-            for(i in 1..5){
+            for (i in 1..5) {
                 delay(1500)
-                postList.add(ImageModel("1", Uri.parse(""),"",false,false,))
+                postList.add(ImageModel("1", Uri.parse(""), "", false, false))
             }
         }
     }
@@ -460,7 +461,8 @@ class ProfileScreen : ComponentActivity() {
                         .height(300.dp)
                         .combinedClickable(onDoubleClick = {
                             list[index] = item.copy(isFavorite = true)
-                        }) {}, contentScale = ContentScale.Crop)
+                        }) {}, contentScale = ContentScale.Crop
+                )
 
                 Row {
                     Icon(
@@ -474,7 +476,11 @@ class ProfileScreen : ComponentActivity() {
                         painterResource(id = R.drawable.ic_chat),
                         contentDescription = "Message",
                         tint = Color.White,
-                        modifier = Modifier.padding(5.dp)
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .clickable {
+                                openChatScreen()
+                            }
                     )
 
                     Icon(
@@ -495,6 +501,16 @@ class ProfileScreen : ComponentActivity() {
 
             }
         }
+    }
+
+
+    private fun openChatScreen() {
+        startActivity(
+            Intent(
+                this@ProfileScreen,
+                MessageScreen::class.java
+            )
+        )
     }
 
     @Composable

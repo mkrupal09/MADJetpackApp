@@ -1,9 +1,11 @@
 package com.example.mycomposecookbook.screen.home.userDashboard
 
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,7 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +28,7 @@ import androidx.paging.compose.items
 import com.example.mycomposecookbook.data.model.User
 import com.example.mycomposecookbook.screen.home.HomeViewModel
 import com.example.mycomposecookbook.screen.home.UserItem
+import com.example.mycomposecookbook.screen.insta.ProfileScreen
 import kotlinx.coroutines.launch
 
 
@@ -44,6 +47,8 @@ fun UserListHome(viewModel: HomeViewModel) {
     val bottomSheetScaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
     val coroutineScope = rememberCoroutineScope()
+
+    val context=LocalContext.current
 
     fun toggleBottomSheet() {
         coroutineScope.launch {
@@ -104,8 +109,11 @@ fun UserListHome(viewModel: HomeViewModel) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
                     items(lazyUsers) { user ->
-                        UserItem(user = user!!)
+                        UserItem(user = user!!, modifier = Modifier.clickable {
+                            openProfileScreen(context)
+                        })
                     }
                     item {
                         if (loadingCallback.value) {
@@ -137,4 +145,16 @@ fun UserListHome(viewModel: HomeViewModel) {
             }
         }
     }
+
+
+}
+
+
+fun openProfileScreen(context: Context) {
+    context.startActivity(
+        Intent(
+            context,
+            ProfileScreen::class.java
+        )
+    )
 }

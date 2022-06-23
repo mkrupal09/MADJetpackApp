@@ -32,18 +32,26 @@
             android:name=".screen.insta.MessageScreen"
             android:exported="true"
             android:theme="@style/Theme.MyComposeCookBook">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".screen.insta.ProfileScreen"
+            android:exported="true"
+            android:theme="@style/Theme.MyComposeCookBook">
+
+
         </activity>
 
 
         <activity
             android:name=".screen.auth.MainActivity"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity

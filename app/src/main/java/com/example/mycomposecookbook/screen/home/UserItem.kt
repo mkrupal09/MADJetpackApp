@@ -1,13 +1,9 @@
 package com.example.mycomposecookbook.screen.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,8 +21,11 @@ import com.example.mycomposecookbook.util.extension.imageLoader
 
 @Composable
 @Preview
-fun UserItem(@PreviewParameter(UserPreviewParameter::class) user: User) {
-    Card(elevation = 5.dp) {
+fun UserItem(
+    @PreviewParameter(UserPreviewParameter::class) user: User,
+    modifier: Modifier = Modifier
+) {
+    Card(elevation = 5.dp, modifier = modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

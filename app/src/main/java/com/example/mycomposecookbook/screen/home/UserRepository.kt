@@ -44,7 +44,6 @@ class UserSource(private val userRepository: UserRepository, val loadCallback: (
         Log.e("paging", "onload " + params.key)
         val position = params.key ?: 1
         val response = userRepository.getUsers(position)
-        delay(5000)
         loadCallback(false)
         return LoadResult.Page(
             response.body()?.list ?: arrayListOf(),

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import com.example.mycomposecookbook.screen.insta.ProfileScreen
 import com.example.mycomposecookbook.screen.scopedstorage.ScopedStorageActivity
 
 @Composable
@@ -90,8 +91,8 @@ fun SettingScreen(navController: NavController = NavController(LocalContext.curr
                     start.linkTo(guidelineStart)
                 }
                 .clickable {
-                    /*openProfileScreen(context)*/
-                    navController.navigate("profile")
+                    openProfileScreen(context)
+                    /*navController.navigate("profile")*/
                 }, fontSize = 30.sp)
             Text(text = "Faq", modifier = Modifier.constrainAs(faq) {
 
@@ -143,7 +144,7 @@ private fun openProfileScreen(context: Context) {
     context.startActivity(
         Intent(
             context,
-            ScopedStorageActivity::class.java
+            ProfileScreen::class.java
         )
     )
 }
