@@ -39,12 +39,9 @@ import kotlinx.coroutines.launch
 
 class MessageScreen : ComponentActivity() {
 
-
     val myUserId = "1"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
 
         setContent {
             val viewModel: MessageViewModel = viewModel()
@@ -56,10 +53,7 @@ class MessageScreen : ComponentActivity() {
                 viewModel.fetchMessage()
             })
         }
-
-
     }
-
 
     data class ChatConfig(val alignment: Alignment, val color: Color)
 
@@ -68,7 +62,6 @@ class MessageScreen : ComponentActivity() {
         viewModel: MessageViewModel,
         modifier: Modifier
     ) {
-
         val coroutineScope = rememberCoroutineScope()
         val scrollState = rememberLazyListState()
         val messageList = viewModel.list
@@ -77,7 +70,6 @@ class MessageScreen : ComponentActivity() {
                 scrollState.animateScrollToItem(messageList.size - 1, 0)
             }
         }
-
 
         val launcher =
             rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {

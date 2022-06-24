@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.mycomposecookbook.R
+import com.example.mycomposecookbook.ui.theme.MyFontFamily
 import com.example.mycomposecookbook.ui.theme.Purple200
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -79,6 +81,7 @@ fun MyEditText(
                     .onFocusChanged {
                         onFocus(it.hasFocus)
                     },
+                textStyle = TextStyle(fontWeight = FontWeight.Bold, fontFamily = MyFontFamily),
                 label = { Text(text = hint) },
                 visualTransformation = if (isPasswordField && passwordToggle.not()) PasswordVisualTransformation() else VisualTransformation.None
             )
@@ -127,7 +130,7 @@ fun MyButton(
             }
             .fillMaxWidth()
             .padding(margin),
-        shape = RoundedCornerShape(10.dp),
+
     ) {
         Text(text = value.uppercase(), modifier = Modifier.padding(8.dp), style = TextStyle())
     }

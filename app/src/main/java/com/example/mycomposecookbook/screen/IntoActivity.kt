@@ -14,21 +14,28 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.mycomposecookbook.R
 import com.example.mycomposecookbook.screen.auth.MainActivity
 import com.example.mycomposecookbook.ui.theme.MyComposeCookBookTheme
-import com.google.accompanist.pager.*
+import com.example.mycomposecookbook.ui.theme.MyFontFamily
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.HorizontalPagerIndicator
+import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
@@ -40,7 +47,7 @@ class IntoActivity : ComponentActivity() {
             val uiController = rememberSystemUiController()
             val pagerState = rememberPagerState()
             val coroutineScope = rememberCoroutineScope()
-            
+
 
             MyComposeCookBookTheme {
                 Box {
@@ -49,7 +56,8 @@ class IntoActivity : ComponentActivity() {
                         count = 10,
                         state = pagerState
                     ) {
-                        val backgroundColor = if (currentPage % 2 == 0) Color.Blue else Color.Gray
+                        val backgroundColor =
+                            if (currentPage % 2 == 0) MaterialTheme.colors.primary else Color.Gray
                         uiController.setStatusBarColor(backgroundColor)
                         Box(
                             Modifier
@@ -67,9 +75,12 @@ class IntoActivity : ComponentActivity() {
                                     modifier = Modifier.size(280.dp)
                                 )
                                 Text(
-                                    text = "Page Number $currentPage",
+                                    text = "Welcome to JetMad",
                                     fontSize = 22.sp,
-                                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    fontFamily = MyFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    color=Color.White
                                 )
                             }
                         }
