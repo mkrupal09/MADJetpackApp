@@ -17,7 +17,7 @@ val Typography = Typography(
     ),
 
     button = TextStyle(
-        fontFamily = FontFamily(Font(R.font.boldnew, FontWeight.Bold)),
+        fontFamily = FontFamily(Font(R.font.bold, FontWeight.Bold)),
         fontWeight = FontWeight.W500,
         fontSize = 14.sp
     ),

@@ -81,7 +81,6 @@ fun MyEditText(
                     .onFocusChanged {
                         onFocus(it.hasFocus)
                     },
-                textStyle = TextStyle(fontWeight = FontWeight.Bold, fontFamily = MyFontFamily),
                 label = { Text(text = hint) },
                 visualTransformation = if (isPasswordField && passwordToggle.not()) PasswordVisualTransformation() else VisualTransformation.None
             )
