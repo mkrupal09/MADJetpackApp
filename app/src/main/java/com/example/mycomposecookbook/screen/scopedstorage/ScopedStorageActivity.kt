@@ -259,7 +259,7 @@ class ScopedStorageActivity : BaseComponentActivity() {
     private fun pickImageFromCamera() {
 
         val dir =
-            getExternalFilesDir(Environment.DIRECTORY_MOVIES)!! // Android>Data>(packagename)>files>(Your file saved here)*/
+            getExternalFilesDir(Environment.DIRECTORY_PICTURES)!! // Android>Data>(packagename)>files>pictures
         /* val dir =
              getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) // Android>Data>(packagename)>files>DCIM>(Your file saved here)*/
 

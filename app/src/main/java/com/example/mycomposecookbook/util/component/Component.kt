@@ -5,8 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -28,16 +26,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.example.mycomposecookbook.R
-import com.example.mycomposecookbook.ui.theme.MyFontFamily
 import com.example.mycomposecookbook.ui.theme.Purple200
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -130,7 +125,7 @@ fun MyButton(
             .fillMaxWidth()
             .padding(margin),
 
-    ) {
+        ) {
         Text(text = value.uppercase(), modifier = Modifier.padding(8.dp), style = TextStyle())
     }
 }
@@ -147,11 +142,11 @@ fun MyText(modifier: Modifier = Modifier, value: String = "Label", callback: () 
 @Preview
 fun TopBarScreen(
     title: String = "Title",
-    statusBarColor: androidx.compose.ui.graphics.Color = Purple200,
+    statusBarColor: Color = Purple200,
     backCallback: () -> Unit = {},
     content: @Composable () -> Unit = {}
 ) {
-    rememberSystemUiController().setStatusBarColor(Purple200)
+    rememberSystemUiController().setStatusBarColor(statusBarColor)
     Scaffold(topBar = {
         TopAppBar(title = {
             MyText(value = title, modifier = Modifier.fillMaxWidth())
@@ -161,8 +156,7 @@ fun TopBarScreen(
             }
         })
     }) { padd ->
-        Box(Modifier.padding(padd))
-        {
+        Box(Modifier.padding(padd)) {
             content()
         }
     }

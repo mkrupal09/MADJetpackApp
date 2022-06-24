@@ -121,4 +121,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat-resources:$appcompat_version"
 
     implementation 'com.github.yalantis:ucrop:2.2.6'
+
+    implementation 'com.giphy.sdk:ui:2.1.18'
 }

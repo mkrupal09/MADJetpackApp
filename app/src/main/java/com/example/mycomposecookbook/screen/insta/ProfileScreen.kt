@@ -177,6 +177,7 @@ class ProfileScreen : ComponentActivity() {
                 }
                 Row(modifier = Modifier.padding(top = 10.dp)) {
                     Text(text = "Story highlights", color = Color.White, fontSize = 16.sp)
+
                     Spacer(modifier = Modifier.weight(1f))
                     Icon(
                         Icons.Filled.ArrowDropDown,
@@ -184,6 +185,7 @@ class ProfileScreen : ComponentActivity() {
                         tint = Color.White,
                     )
                 }
+                Followers(modifier = Modifier.padding(vertical = 10.dp))
                 Text(
                     text = "Keep your favorite stories on your profile",
                     color = Color.White,
@@ -250,6 +252,37 @@ class ProfileScreen : ComponentActivity() {
     }
 
     @Composable
+    private fun Followers(modifier: Modifier = Modifier) {
+
+        LazyRow(horizontalArrangement = Arrangement.spacedBy((-15).dp), modifier = modifier) {
+            items(5) {
+                AsyncImage(
+                    model = "https://randomuser.me/api/portraits/men/${it}.jpg",
+                    contentDescription = "image",
+                    modifier = Modifier
+                        .size(45.dp)
+                        .clip(CircleShape)
+                        .border(2.dp, MaterialTheme.colors.primary, CircleShape),
+                )
+            }
+            item {
+                Box(
+                    modifier = Modifier
+                        .size(45.dp)
+                        .background(Color.White, CircleShape)
+                        .border(2.dp, MaterialTheme.colors.primary, CircleShape)
+                ) {
+                    Text(
+                        text = "+15",
+                        color = Color.Black, modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+            }
+        }
+    }
+
+    @Composable
     private fun PostBottomSheet() {
         Box(
             modifier = Modifier
@@ -295,8 +328,6 @@ class ProfileScreen : ComponentActivity() {
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = modifier
         ) {
-
-
             item {
                 Box(
                     modifier = Modifier
@@ -323,30 +354,28 @@ class ProfileScreen : ComponentActivity() {
             }
             items(10) { item ->
 
-                AsyncImage(
-                    model = item, contentDescription = "image",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .border(2.dp, storieBrush(), CircleShape)
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                        .border(2.dp, Color.White)
-                )
-            }
+                Box {
+                    AsyncImage(
+                        model = "https://randomuser.me/api/portraits/men/${item}.jpg",
+                        contentDescription = "image",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .border(2.dp, storieBrush(), CircleShape)
+                            .padding(4.dp)
+                            .clip(CircleShape)
+                            .background(Color.White)
+                            .border(2.dp, Color.White)
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .size(15.dp)
+                            .background(Color.Green, CircleShape)
+                            .align(Alignment.BottomEnd)
+                            .border(2.dp,Color.Black, CircleShape)
+                            .offset(1.dp, 1.dp)
+                    )
+                }
 
-            items(10) { item ->
-
-                AsyncImage(
-                    model = item, contentDescription = "image",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .border(2.dp, storieBrush(), CircleShape)
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                        .border(2.dp, Color.White)
-                )
             }
         }
     }
