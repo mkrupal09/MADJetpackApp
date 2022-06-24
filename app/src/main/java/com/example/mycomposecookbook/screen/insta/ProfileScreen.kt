@@ -67,7 +67,7 @@ class ProfileScreen : ComponentActivity() {
                         "Krupal@gmail.com",
                         "Krupal",
                         "Mehta",
-                        "\"https://randomuser.me/api/portraits/men/1.jpg"
+                        "https://randomuser.me/api/portraits/men/45.jpg"
                     )
                 )
             }
@@ -175,6 +175,7 @@ class ProfileScreen : ComponentActivity() {
                         Text(text = "Edit Profile", color = Color.White)
                     }
                 }
+                Followers(modifier = Modifier.padding(vertical = 10.dp))
                 Row(modifier = Modifier.padding(top = 10.dp)) {
                     Text(text = "Story highlights", color = Color.White, fontSize = 16.sp)
 
@@ -185,7 +186,6 @@ class ProfileScreen : ComponentActivity() {
                         tint = Color.White,
                     )
                 }
-                Followers(modifier = Modifier.padding(vertical = 10.dp))
                 Text(
                     text = "Keep your favorite stories on your profile",
                     color = Color.White,
