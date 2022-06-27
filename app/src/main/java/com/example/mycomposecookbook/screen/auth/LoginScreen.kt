@@ -3,7 +3,9 @@ package com.example.mycomposecookbook.screen.auth
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -11,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.mycomposecookbook.R
@@ -59,6 +63,8 @@ fun LoginScreen(
         }
     }
 
+    
+    updateTransition(targetState = )
 
     /*val scaffoldState = rememberScaffoldState() // this contains the `SnackbarHostState`
     val (showSnackBar, setShowSnackBar) = remember {
@@ -128,6 +134,14 @@ fun LoginScreen(
                 navController.navigate("forgot")
             }
 
+            Text(
+                text = "Peoples are using...",
+                fontSize = 20.sp,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 10.dp)
+            )
+
             LazyHorizontalGrid(
                 contentPadding = PaddingValues(0.dp),
                 rows = GridCells.Fixed(3),
@@ -156,7 +170,6 @@ fun LoginScreen(
             MyButton(value = "Create an account", margin = 10.dp) {
                 navController.navigate("register?email=${email.value}")
             }
-
 
             //to animate logo
             LaunchedEffect(key1 = Unit, block = {
