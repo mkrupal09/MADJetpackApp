@@ -1,6 +1,6 @@
 # MADJetpackApp
 
-![](images/mad1.png)
+![](images/mad1.jpg)
 
 This App covers following MAD tools, API & Languages
 
