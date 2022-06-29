@@ -1,6 +1,6 @@
-# MADJetpackApp
 
-Modern Android Development with Jetpack Compose
+
+![](images/mad2.jpg)
 
 This App covers following MAD tools, API & Languages
 
