@@ -64,7 +64,7 @@ fun LoginScreen(
     }
 
     
-    updateTransition(targetState = )
+
 
     /*val scaffoldState = rememberScaffoldState() // this contains the `SnackbarHostState`
     val (showSnackBar, setShowSnackBar) = remember {
@@ -174,8 +174,6 @@ fun LoginScreen(
             //to animate logo
             LaunchedEffect(key1 = Unit, block = {
                 logoVisible = true
-
-
                 logoScale.animateTo(
                     targetValue = 1.0f,
                     animationSpec = tween(

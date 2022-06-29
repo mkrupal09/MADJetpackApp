@@ -48,6 +48,10 @@ fun UserListHome(viewModel: HomeViewModel) {
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed))
     val coroutineScope = rememberCoroutineScope()
 
+    val x= derivedStateOf {
+
+    }
+
     val context=LocalContext.current
 
     fun toggleBottomSheet() {

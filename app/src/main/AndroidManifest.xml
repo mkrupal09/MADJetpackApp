@@ -46,7 +46,13 @@
 
         <activity
             android:name=".screen.auth.MainActivity"
-            android:exported="true">
+            android:exported="true"></activity>
+
+
+        <activity
+            android:name=".screen.player.MusicPlayerActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
